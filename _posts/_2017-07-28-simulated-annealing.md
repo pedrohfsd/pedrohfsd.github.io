@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Metaheuristic: Simulated Annealing
+title: Metaheuristic - Simulated Annealing
 date: 2017-07-31
 ---
 
