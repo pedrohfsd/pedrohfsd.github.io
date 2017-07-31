@@ -13,4 +13,5 @@ Where to use it?
 
 References
 ---
-[Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. "Optimization by simulated annealing." science 220.4598 (1983): 671-680.](https://doi.org/10.1126%2Fscience.220.4598.671)
+- [Wikipedia - Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
+- [Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. "Optimization by simulated annealing." science 220.4598 (1983): 671-680.](https://doi.org/10.1126%2Fscience.220.4598.671)
