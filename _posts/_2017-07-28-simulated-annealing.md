@@ -11,7 +11,7 @@ date: 2017-07-28
 
 I'm dividing this post into 2 parts:
 - Part 1 (this post): Discuss the techinique definition, idea and advantages 
-- Part 2 : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.
+- [Part 2 : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.]()
 
 Definition
 ---
@@ -37,8 +37,18 @@ Let's divide this process into 5 main steps then:
 Advantages
 ---
 Alright, now why should we use this technique? It doesn't necessarily finds the optimum answer, it's not necessarily fast (depends on the initial temperature, drop rate and perturbation strategy) and it's hard to predict how good the final answer may be. Why should we use it  in first place?  
-Well, start by noticing that this solution belongs to the metaheuristic soultions class so, like every other metaheuristic, it's not problem dependant, we can apply it to any problem we see fit. When we don't know an optimum strategy to solve a problem or it's impractical to use an exact one, this technique may be a good option to, try to, find a good answer in an acceptable time. Actually, its popularity is quite big in many research fields. Furthermore, because it's problem independant, it doesn't suffers from what many heuristics tend to suffer: [being stuck at local optimum](https://en.wikipedia.org/wiki/Local_optimum). It has higher chances to converge to the global optimum (same as optimum answer) because it will, initially, accept answers that didn't improve the current answer and, by being worst than the previous, this new answer may get it out from the local optimum leading to another local, which this time is global, optimum. The image below, from Wikipedia, illustrates this optimization concept. ![By KSmrq GFDL 1.2 http://www.gnu.org/licenses/old-licenses/fdl-1.2.html or GFDL http://www.gnu.org/copyleft/fdl.html, via Wikimedia Commons](https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Extrema_example_original.svg/256px-Extrema_example_original.svg.png)  
-Back to our initial question another advantage of this technique is that its speed and quality relate to the initial params, so the person executing the technique can balance speed over quality by incrementing or decrementing parameter values. This is ideal for scenarios where one can't prioritize both, making this technique one of the few viable solutions in this case. Using the Stochastic Sampling perturbations one can also use randomness in its favor by executing multiple instances in parallel: both will finish at the same time returning distinct answers, just keep then the best one to increase the chances of finding the optimum one.
+Well, start by noticing that this solution belongs to the metaheuristic soultions class so, like every other metaheuristic, it's not problem dependant, we can apply it to any problem we see fit. When we don't know an optimum strategy to solve a problem or it's impractical to use an exact one, this technique may be a good option to, try to, find a good answer in an acceptable time. Actually, its popularity is quite big in many research fields. Furthermore, because it's problem independant, it doesn't suffers from what many heuristics tend to suffer: [being stuck at local optimum](https://en.wikipedia.org/wiki/Local_optimum). It has higher chances to converge to the global optimum (same as optimum answer) because it will, initially, accept answers that didn't improve the current answer and, by being worst than the previous, this new answer may get it out from the local optimum leading to another local, which this time is global, optimum. The image below, from Wikipedia, illustrates this optimization concept: ![By KSmrq GFDL 1.2 http://www.gnu.org/licenses/old-licenses/fdl-1.2.html or GFDL http://www.gnu.org/copyleft/fdl.html, via Wikimedia Commons](https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Extrema_example_original.svg/256px-Extrema_example_original.svg.png)  
+Back to our initial question another advantage of this technique is that its speed and quality relate to the initial params, so one can balance speed over quality by incrementing or decrementing parameter values. This is ideal for scenarios where one can't prioritize both, making this technique one of the few viable solutions in this case. Using the Stochastic Sampling perturbations one can also use randomness in its favor by executing multiple instances in parallel: both will finish at the same time returning distinct answers, just keep then the best one to increase the chances of finding the optimum one.  
+Summarizing:
+- Problem independent, aplicable to any problem ("many" would be more precise here, but you got the point)
+- Finds a good approximate solution when optimal is impractible
+- Avoids local optimum dilemma, higher chances to converge to the global optimum
+- Allows balancing speed x quality
+- Stochastic, parallel solution improves approximation to optimum answer
+
+Applications
+---
+Jump to [Part 2]() for a hands-on algorithm explaining how to implment Simluated Annealing to solve the Traveling Salesman Problem. 
 
 References
 ---
