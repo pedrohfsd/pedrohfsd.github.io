@@ -60,7 +60,7 @@ The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop) fo
     1. Build a new solution from the current one
     1. Try to use the new answer 
         1. If new solution is better than current use new solution as current, keep the best overall
-        1. Else If \\(E^{\frac{current-new}{temperature}} > random(0,1)\\), use new solution as current
+        1. Else If \\(e^{\frac{current-new}{temperature}} > random(0,1)\\), use new solution as current
     1. Decrement temperature
 1. Return the overall best answer
 
@@ -94,8 +94,8 @@ Yeah, I know! There's always some minor, but important, details of implementatio
 The Mathematical Fun
 ---
 You may be challenged by the equation:
-\\[E^{\frac{current-new}{temperature}} > random(0,1)\\]
-Don' be. Just take a closer look at it and you will understand it. Everytime you reach this line of code is because \\(current>new\\), so this subtraction always return a number \\(< 0\\). This negative result will then be divided by the current temperature so: if the temperature is high then the negative number will be divided by a big number making it small, if the temperature is small then the negative number will be divided by small number making it big. Remember, though, that we are making "e" to the power of this negative number power so it's an inverse relationship the bigger the negative number the smaller will be E to it's power, ex. \\(e^{-x}>e^{-2x}\\). At the final part we are comparing the result to see if it's bigger than a random number \\(0\leq random(0,1)<1\\) so the bigger the result is, more likely it is to be greater than the randomly generated number. More especifically: if temperature is high, higher are the chances that the result will be greater than the randomly generated number.
+\\[e^{\frac{current-new}{temperature}} > random(0,1)\\]
+Don' be. Just take a closer look at it and you will understand it. Everytime you reach this line of code is because \\(current>new\\), so this subtraction always return a number \\(< 0\\). This negative result will then be divided by the current temperature so: if the temperature is high then the negative number will be divided by a big number making it small, if the temperature is small then the negative number will be divided by small number making it big. Remember, though, that we are making "e" to the power of this negative number power so it's an inverse relationship the bigger the negative number the smaller will be E 'e' to it's power, ex. \\(e^{-x}>e^{-2x}\\). At the final part we are comparing the result to see if it's bigger than a random number \\(0\leq random(0,1)<1\\) so the bigger the result is, more likely it is to be greater than the randomly generated number. More especifically: if temperature is high, higher are the chances that the result will be greater than the randomly generated number.
 
 The real challenge of this equation is demonstrating the probabilities in play, something in which we are better of reading [one of the papers](https://doi.org/10.1126%2Fscience.220.4598.671) that originated it.
 
