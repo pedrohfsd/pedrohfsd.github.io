@@ -22,7 +22,7 @@ Interactive Demo (SA applied to TSP)
   <canvas id="canvas" width="640px" height="490" style="border:1px solid #000000;"></canvas>
   <br/><br/><input id='cityCountId' value='20' size="5"/> - Cities
   <br/><input id='temperatureId' value='1000' size="5"/> - Initial Temperature
-  <br/><input id='dropRateId' value='0.05' size="5"/> - Temperature Drop Rate (in %)
+  <br/><input id='dropRateId' value='0.05' size="5"/> - Temperature Drop Rate (\\(0\leq in<\\)1)
   <br/><input id='delayId' value='20' size="5"/> - Delay (in millis)
   <div style="float:right">
     <br/><button onclick="generate(props);">Generate</button>
@@ -97,7 +97,7 @@ The Mathematical Fun
 ---
 You may be challenged by the equation:
 \\[E^{\frac{current-new}{temperature}} > random(0,1)\\]
-Don' be. Just take a closer look at it and you will understand it. Everytime you reach this line of code is because \\(current<new\\), so this subtraction always return a number \\(< 0\\). This negative result will then be divided by the current temperature so: if the temperature is high then the negative number will be divided by a big number making it small, if the temperature is small then the negative number will be divided by small number making it big. Remember, though, that we are making "e" to the power of this negative number power so it's an inverse relationship the bigger the negative number the smaller will be E to it's power, ex. \\(e^{-x}>e^{-2x}\\). At the final part we are comparing the result to see if it's bigger than a random number \\(0\leq random(0,1)<1\\) so the bigger the result is, more likely it is to be greater than the randomly generated number. More especifically: if temperature is high, higher are the chances that the result will be geater than the randomly generated number.
+Don' be. Just take a closer look at it and you will understand it. Everytime you reach this line of code is because \\(current>new\\), so this subtraction always return a number \\(< 0\\). This negative result will then be divided by the current temperature so: if the temperature is high then the negative number will be divided by a big number making it small, if the temperature is small then the negative number will be divided by small number making it big. Remember, though, that we are making "e" to the power of this negative number power so it's an inverse relationship the bigger the negative number the smaller will be E to it's power, ex. \\(e^{-x}>e^{-2x}\\). At the final part we are comparing the result to see if it's bigger than a random number \\(0\leq random(0,1)<1\\) so the bigger the result is, more likely it is to be greater than the randomly generated number. More especifically: if temperature is high, higher are the chances that the result will be geater than the randomly generated number.
 
 The real challenge of this equation is demonstrating the probabilities in play, something in which we are better of reading [one of the papers](https://doi.org/10.1126%2Fscience.220.4598.671) that originated it.
 
