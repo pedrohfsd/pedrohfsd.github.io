@@ -6,7 +6,7 @@ date: 2017-07-28
 
 {{ page.title }}
 ================
-
+---
 ![Annealing](/img/annealing.jpg)
 
 I'm dividing this post into 2 parts:
