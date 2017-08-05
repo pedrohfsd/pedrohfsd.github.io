@@ -10,7 +10,7 @@ date: 2017-08-04
 Disclaimer
 ---
 I'm dividing this post into 2 parts:
-- [Part 1 : Discuss the technique definition, idea and advantages](/_posts/2017-07-28-simulated-annealing-part1)
+- [Part 1 : Discuss the technique definition, idea and advantages](/2017-07-28-simulated-annealing-part1)
 - Part 2 (this post) : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.
 
 Interactive Demo (SA applied to TSP)
