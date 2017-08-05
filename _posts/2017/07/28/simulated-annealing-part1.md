@@ -11,7 +11,7 @@ date: 2017-07-28
 
 I'm dividing this post into 2 parts:
 - Part 1 (this post): Discuss the technique definition, idea and advantages 
-- [Part 2 (Next Week) : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.]()
+- [Part 2: Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.](/simulated-annealing-part2)
 
 Definition
 ---
@@ -51,7 +51,7 @@ Back to our initial question another advantage of this technique is that its spe
 
 Applications
 ---
-Jump to [Part 2 (Next Week)]() for a hands-on algorithm explaining how to implement Simulated Annealing to solve the Traveling Salesman Problem. 
+Jump to [Part 2](/2017-08-04-simulated-annealing-part2) for a hands-on algorithm explaining how to implement Simulated Annealing to solve the Traveling Salesman Problem. 
 
 References
 ---
