@@ -74,7 +74,7 @@ while(temperature > 1){
   if(newTour.cost <= currentTour.cost) currentTour = newTour;
   else if(Math.exp((currentTour.cost-newTour.cost)/temperature) > Math.random()) currentTour = newTour;      
   if(currentTour.cost < bestTour.cost) bestTour = currentTour; // keep the best, always
-  temperature *= 1-dropRate; // make it colder
+  temperature *= 1-dropRate; // make it cooler
 }
 return bestOveerall;
 ```
