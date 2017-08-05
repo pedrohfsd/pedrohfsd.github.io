@@ -6,7 +6,7 @@ date: 2017-07-20
 {{ page.title }}
 ================
 ---
-Few yars ago I've made a [Wordpress](https://wordpress.com){:target="_blank"} blog to talk about development and algorithms in general.
+Few yars ago I've made a [Wordpress](https://itsiastic.wordpress.com){:target="_blank"} blog to talk about development and algorithms in general.
 The main idea was to retribute the worldwide developers community with code and ideas the same way they have contributed to me/us all
 these years since I first became interested in coding dating back from 2000. Yeah! It's been a while =D.  
 
