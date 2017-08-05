@@ -15,7 +15,7 @@ I'm dividing this post into 2 parts:
 
 Interactive Demo (SA applied to TSP)
 ---
-<script><% include canvas.js %></script>
+<script>{% include canvas.js %}</script>
 <script src="https://rawgit.com/pedrohfsd/TSP/develop/simulated_annealing.js"></script>
 
 <div style="width:640px; margin:auto">
