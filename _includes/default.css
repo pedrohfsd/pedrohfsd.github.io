@@ -40,6 +40,15 @@ pre {
 .highlight pre{
   border: 0px;
 }
-.canvas-form .form-inline{
+.canvas-demo .form-inline{
   margin-top: 5px;
+}
+.canvas-demo .form-btn{
+  text-align: right;
+}
+.canvas-demo canvas{
+  padding: 0;
+  margin: auto;
+  display: block;
+  border:1px solid #000000;
 }
