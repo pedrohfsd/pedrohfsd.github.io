@@ -17,7 +17,7 @@ Interactive Demo (SA applied to TSP)
 <script src="https://rawgit.com/pedrohfsd/TSP/develop/simulated_annealing.js"></script>
 
 <div style="background-color: #f5f5f5; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; padding-top: 20px;">
-  <canvas id="canvas" width="640px" height="490" style="text-align:center; border:1px solid #000000;"></canvas>
+  <div style="text-align:center"><canvas id="canvas" width="640px" height="490" style="border:1px solid #000000;"></canvas></div>
   <br/><br/><input id='cityCountId' value='20' size="5"/> - Cities
   <br/><input id='temperatureId' value='1000' size="5"/> - Initial Temperature
   <br/><input id='dropRateId' value='0.05' size="5"/> - Temperature Drop Rate (\\(0\leq in<\\)1)
