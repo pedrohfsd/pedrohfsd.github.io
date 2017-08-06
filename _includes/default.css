@@ -40,3 +40,6 @@ pre {
 .highlight pre{
   border: 0px;
 }
+.canvas-form .form-inline{
+  margin-top: 5px;
+}
