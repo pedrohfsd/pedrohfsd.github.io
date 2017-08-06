@@ -18,7 +18,7 @@ Interactive Demo (SA applied to TSP)
 
 <div class="well canvas-demo">
   <canvas id="canvas" width="640px" height="490"></canvas>
-  <div class="form-inline"\>
+  <div class="form-inline">
     <div class="form-group">
       <input id="cityCountId" value="20" size="5" class="form-control" />
       <label for"cityCountId"> - Cities</label>
