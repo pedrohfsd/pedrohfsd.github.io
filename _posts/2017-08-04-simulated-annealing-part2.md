@@ -75,7 +75,7 @@ while(temperature > 1){
   temperature *= 1-dropRate; // make it cooler
 }
 return bestTour;
-{% highlight javascript %}
+{% endhighlight %}
 
 Voila! That's pretty much the algorithm behind the interactive demo at the beginning of this page. Quite naive in some aspects, yes, but faithful tied to the theory.
 
