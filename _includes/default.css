@@ -48,7 +48,8 @@ pre {
 }
 .canvas-demo canvas{
   padding: 0;
+  margin-bottom: 20px;
   margin: auto;
   display: block;
-  border:1px solid #000000;
+  border: 1px solid #000000;
 }
