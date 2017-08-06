@@ -68,7 +68,7 @@ The javascript code follows (and for any other language really, the implementati
 {% highlight JavaScript linenos %}
 while(temperature > 1){
   var newTour = findNeighbour(currTour);
-  if(newTour.cost <= currTour.cost || Math.exp((currTour.cost-newTour.cost)/temperature)>Math.random()){
+  if(newTour.cost <= currTour.cost || Math.exp((currTour.cost-newTour.cost)/temperature) > Math.random()){
     currTour = newTour;
     bestTour = Math.min(bestTour, currTour);
   }
