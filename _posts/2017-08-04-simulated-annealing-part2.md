@@ -65,7 +65,7 @@ The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop){:t
 1. Return the overall best answer
 
 The javascript code follows (and for any other language really, the implementation is trivial):
-{% highlight javascript linenos %}
+{% highlight JavaScript linenos %}
 while(temperature > 1){
   var newTour = findNeighbour(currTour);
   if(newTour.cost <= currTour.cost || Math.exp((currTour.cost-newTour.cost)/temperature)>Math.random()){
