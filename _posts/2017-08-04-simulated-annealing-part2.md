@@ -16,14 +16,34 @@ Interactive Demo (SA applied to TSP)
 <script>{% include canvas.js %}</script>
 <script src="https://rawgit.com/pedrohfsd/TSP/develop/simulated_annealing.js"></script>
 
-<div class="well" style="padding-left: 20px; padding-right: 20px; padding-bottom: 20px; padding-top: 20px;">
-  <div style="text-align:center"><canvas id="canvas" width="640px" height="490" style="border:1px solid #000000;"></canvas></div>
-  <br/><br/><input id='cityCountId' value='20' size="5" class="form-control"/> - Cities
-  <br/><input id='temperatureId' value='1000' size="5" class="form-control"/> - Initial Temperature
-  <br/><input id='dropRateId' value='0.05' size="5" class="form-control"/> - Temperature Drop Rate (\\(0\leq in<\\)1)
-  <br/><input id='delayId' value='20' size="5" class="form-control"/> - Delay (in millis)
-  <div style="text-align:right">
-    <br/><button onclick="generate(props);" class="btn btn-default">Generate</button>
+<div class="well canvas-demo">
+  <canvas id="canvas" width="640px" height="490"></canvas>
+  <div class="form-inline"\>
+    <div class="form-group">
+      <input id="cityCountId" value="20" size="5" class="form-control" />
+      <label for"cityCountId"> - Cities</label>
+    </div>
+  </div>
+  <div class="form-inline">
+    <div class="form-group">
+      <input id="temperatureId" value="1000" size="5" class="form-control" />
+      <label for"temperatureId"> - Initial Temperature</label>
+    </div>
+  </div>
+  <div class="form-inline">
+    <div class="form-group">
+      <input id="dropRateId" value="0.05" size="5" class="form-control" />
+      <label for"dropRateId"> - Temperature Drop Rate (between 0 and 1)</label>
+    </div>
+  </div>
+  <div class="form-inline">
+    <div class="form-group">
+      <input id="delayId" value="20" size="5" class="form-control" />
+      <label for"delayId"> - Delay (in millis)</label>
+    </div>
+  </div>
+  <div class="form-btn">
+    <button onclick="generate(props);" class="btn btn-default">Generate</button>
     <button onclick="run(props, document.getElementById('temperatureId').value, document.getElementById('dropRateId').value, document.getElementById('delayId').value);" class="btn btn-primary">Run</button>
     <button onclick="resetCanvas(props, props.vertices);" class="btn btn-danger">Reset</button>
   </div>
