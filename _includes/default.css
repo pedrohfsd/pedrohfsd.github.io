@@ -37,3 +37,6 @@ pre {
   border: 0;
   z-index: 1;
 }
+.highlight {
+  border: 0px;
+}
