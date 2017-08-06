@@ -21,25 +21,25 @@ Interactive Demo (SA applied to TSP)
   <div class="form-inline">
     <div class="form-group">
       <input id="cityCountId" value="20" size="5" class="form-control" />
-      <label for"cityCountId"> - Cities</label>
+      <label for"cityCountId"> Cities</label>
     </div>
   </div>
   <div class="form-inline">
     <div class="form-group">
       <input id="temperatureId" value="1000" size="5" class="form-control" />
-      <label for"temperatureId"> - Initial Temperature</label>
+      <label for"temperatureId"> Initial Temperature</label>
     </div>
   </div>
   <div class="form-inline">
     <div class="form-group">
       <input id="dropRateId" value="0.05" size="5" class="form-control" />
-      <label for"dropRateId"> - Temperature Drop Rate (between 0 and 1)</label>
+      <label for"dropRateId"> Temperature Drop Rate (between 0 and 1)</label>
     </div>
   </div>
   <div class="form-inline">
     <div class="form-group">
       <input id="delayId" value="20" size="5" class="form-control" />
-      <label for"delayId"> - Delay (in millis)</label>
+      <label for"delayId"> Delay (in millis)</label>
     </div>
   </div>
   <div class="form-btn">
