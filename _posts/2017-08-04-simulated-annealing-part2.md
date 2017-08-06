@@ -65,7 +65,7 @@ The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop){:t
 1. Return the overall best answer
 
 The javascript code follows (and for any other language really, the implementation is trivial):
-```javascript
+{% highlight javascript %}
 while(temperature > 1){
   var newTour = findNeighbour(currTour);
   if(newTour.cost <= currTour.cost || Math.exp((currTour.cost-newTour.cost)/temperature)>Math.random()){
@@ -75,7 +75,8 @@ while(temperature > 1){
   temperature *= 1-dropRate; // make it cooler
 }
 return bestTour;
-```
+{% highlight javascript %}
+
 Voila! That's pretty much the algorithm behind the interactive demo at the beginning of this page. Quite naive in some aspects, yes, but faithful tied to the theory.
 
 Those small details
