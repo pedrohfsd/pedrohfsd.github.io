@@ -54,7 +54,7 @@ Interactive Demo (SA applied to TSP)
 
 Algorithm
 ---
-The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop) follows the 5 main steps described for Simulated Annealing in the previous [post](2017-07-28-simulated-annealing-part1) using stochastic sampling, but now applied to TSP:
+The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop){:target="_blank"} follows the 5 main steps described for Simulated Annealing in the previous [post](2017-07-28-simulated-annealing-part1) using stochastic sampling, but now applied to TSP:
 1. Find a feasible solution for the TSP
 1. While temperature is greater than 1:
     1. Build a new solution from the current one
@@ -97,14 +97,14 @@ You may be challenged by the equation:
 \\[e^{\frac{current-new}{temperature}} > random(0,1)\\]
 Don' be. Just take a closer look at it and you will understand it. Everytime you reach this line of code is because \\(current>new\\), so this subtraction always return a number \\(< 0\\). This negative result will then be divided by the current temperature so: if the temperature is high then the negative number will be divided by a big number making it small, if the temperature is small then the negative number will be divided by small number making it big. Remember, though, that we are making "e" to the power of this negative number power so it's an inverse relationship the bigger the negative number the smaller will be E 'e' to it's power, ex. \\(e^{-x}>e^{-2x}\\). At the final part we are comparing the result to see if it's bigger than a random number \\(0\leq random(0,1)<1\\) so the bigger the result is, more likely it is to be greater than the randomly generated number. More especifically: if temperature is high, higher are the chances that the result will be greater than the randomly generated number.
 
-The real challenge of this equation is demonstrating the probabilities in play, something in which we are better of reading [one of the papers](https://doi.org/10.1126%2Fscience.220.4598.671) that originated it.
+The real challenge of this equation is demonstrating the probabilities in play, something in which we are better of reading [one of the papers](https://doi.org/10.1126%2Fscience.220.4598.671){:target="_blank"} that originated it.
 
 References
 ---
-1. [Wikipedia - Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing)
-1. [Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. "Optimization by simulated annealing." science 220.4598 (1983): 671-680.](https://doi.org/10.1126%2Fscience.220.4598.671)
-1. [Černý, V. (1985). "Thermodynamical approach to the traveling salesman problem: An efficient simulation algorithm". Journal of Optimization Theory and Applications. 45: 41–51.](https://doi.org/10.1007%2FBF00940812)
-1. [Semenovskaya, S.; Khachaturyan, K.; Khachaturyan, A. (1985). "Statistical Mechanics Approach to the Determination of a Crystal". Acta Crystallographica (A41): 268–273.](https://doi.org/10.1107%2FS0108767385000563)
-1. [Almost Looks Like Work by Jason Cole](https://jasmcole.com/2014/11/16/annealing-the-underground/)
-1. [Wikipedia - Local optimum](https://en.wikipedia.org/wiki/Local_optimum)
-1. [Wikipedia - Maxima and minima](https://en.wikipedia.org/wiki/Maxima_and_minima)
+1. [Wikipedia - Simulated Annealing](https://en.wikipedia.org/wiki/Simulated_annealing){:target="_blank"}
+1. [Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. "Optimization by simulated annealing." science 220.4598 (1983): 671-680.](https://doi.org/10.1126%2Fscience.220.4598.671){:target="_blank"}
+1. [Černý, V. (1985). "Thermodynamical approach to the traveling salesman problem: An efficient simulation algorithm". Journal of Optimization Theory and Applications. 45: 41–51.](https://doi.org/10.1007%2FBF00940812){:target="_blank"}
+1. [Semenovskaya, S.; Khachaturyan, K.; Khachaturyan, A. (1985). "Statistical Mechanics Approach to the Determination of a Crystal". Acta Crystallographica (A41): 268–273.](https://doi.org/10.1107%2FS0108767385000563){:target="_blank"}
+1. [Almost Looks Like Work by Jason Cole](https://jasmcole.com/2014/11/16/annealing-the-underground/){:target="_blank"}
+1. [Wikipedia - Local optimum](https://en.wikipedia.org/wiki/Local_optimum){:target="_blank"}
+1. [Wikipedia - Maxima and minima](https://en.wikipedia.org/wiki/Maxima_and_minima){:target="_blank"}
