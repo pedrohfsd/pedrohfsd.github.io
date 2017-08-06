@@ -7,14 +7,10 @@ date: 2017-08-04
 {{ page.title }}
 ================
 ---
-<div class="bs-callout bs-callout-info" id="callout-helper-bg-specificity">
-<h4>I'm dividing this post into 2 parts:</h4>
-  <ul>
-    <li><a href="{% post_url 2017-07-28-simulated-annealing-part1 %}">Part 1 : Discuss the technique definition, idea and advantages</a></li>
-    <li>Part 2 (this post) : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.</li>
-  </ul>
-</div>
-
+**I'm dividing this post into 2 parts:**
+- [Part 1 : Discuss the technique definition, idea and advantages]({% post_url 2017-07-28-simulated-annealing-part1 %})
+- Part 2 (this post) : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.
+---
 Interactive Demo (SA applied to TSP)
 ---
 <script>{% include canvas.js %}</script>
