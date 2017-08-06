@@ -16,13 +16,13 @@ Interactive Demo (SA applied to TSP)
 <script>{% include canvas.js %}</script>
 <script src="https://rawgit.com/pedrohfsd/TSP/develop/simulated_annealing.js"></script>
 
-<div style="width:640px; margin:auto">
+<div style="width: 680px; background-color: #f5f5f5; padding-left: 20px; padding-right: 20px; padding-bottom: 20px; padding-top: 20px;">
   <canvas id="canvas" width="640px" height="490" style="border:1px solid #000000;"></canvas>
   <br/><br/><input id='cityCountId' value='20' size="5"/> - Cities
   <br/><input id='temperatureId' value='1000' size="5"/> - Initial Temperature
   <br/><input id='dropRateId' value='0.05' size="5"/> - Temperature Drop Rate (\\(0\leq in<\\)1)
   <br/><input id='delayId' value='20' size="5"/> - Delay (in millis)
-  <div style="float:right">
+  <div style="text-align:right">
     <br/><button onclick="generate(props);">Generate</button>
     <button onclick="run(props, document.getElementById('temperatureId').value, document.getElementById('dropRateId').value, document.getElementById('delayId').value);">Run</button>
     <button onclick="resetCanvas(props, props.vertices);">Reset</button>
