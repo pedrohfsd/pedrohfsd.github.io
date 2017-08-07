@@ -1,3 +1,14 @@
+body {
+    font-family: "Merriweather", "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+}
+p {
+    margin: 20px 0 20px 0px;
+    line-height: 26px;
+}
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+}
 .footer {
   padding-top: 20px;
   padding-bottom: 20px;
