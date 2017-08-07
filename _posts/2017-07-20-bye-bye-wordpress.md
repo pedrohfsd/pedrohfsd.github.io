@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: Bye Bye Wordpress
 date: 2017-07-20
 ---
