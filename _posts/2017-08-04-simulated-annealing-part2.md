@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Optimization with Simulated Annealing - Part 2
+title: Optimization with Simulated Annealing - Part 2 - TSP Solver
 date: 2017-08-04
 ---
 
