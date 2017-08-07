@@ -10,9 +10,9 @@ p {
   font-weight: 700;
 }
 ul li, ol li {
-    margin-bottom: 20px;
-    margin-top: 20px;
-    line-height: 28px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    line-height: 20px;
 }
 blockquote {
     background-color: #eef7fa;
