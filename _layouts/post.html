@@ -1,6 +1,10 @@
 ---
 layout: default
 ---
+#{{ page.title }}
+######Published on {{ page.date }}
+---
+
 {{ content }}
 
 <div id="related">
@@ -15,12 +19,6 @@ layout: default
 <!-- Disqus -->
 <div id="disqus_thread"></div>
 <script>
-var disqus_config = function () {
-/*
-this.page.url = pedrohfsd-github-io
-this.page.identifier = SIMULATED_ANNEALING;
-*/
-};
 (function() {
 var d = document, s = d.createElement('script');
 s.src = 'https://pedrohfsd-github-io.disqus.com/embed.js';
