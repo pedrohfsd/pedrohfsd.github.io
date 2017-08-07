@@ -4,9 +4,6 @@ title: Metaheuristic - Simulated Annealing - Part 1
 date: 2017-07-28
 ---
 
-{{ page.title }}
-================
----
 > **I'm dividing this post into 2 parts:**
 > - Part 1 (this post): Discuss the technique definition, idea and advantages 
 > - [Part 2: Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.]({% post_url 2017-08-04-simulated-annealing-part2 %})
