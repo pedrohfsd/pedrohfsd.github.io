@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Metaheuristic - Simulated Annealing - Part 1
+title: Optimization with Simulated Annealing - Part 1
 date: 2017-07-28
 ---
 
