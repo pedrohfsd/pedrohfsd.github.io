@@ -53,3 +53,8 @@ pre {
   display: block;
   border: 1px solid #000000;
 }
+.post-title{
+}
+.post-date{
+  color: #999;
+}
