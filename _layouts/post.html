@@ -2,7 +2,7 @@
 layout: default
 ---
 <span class="post-title h1">{{ page.title }}</span>
-<span class="post-date">Published on {{ page.date }}</span>
+<span class="post-date">Published on {{ page.date | date: "%a, %b %d, %Y" }}</span>
 ---
 
 {{ content }}
