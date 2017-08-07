@@ -9,6 +9,20 @@ p {
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
+blockquote {
+    background-color: #eef7fa;
+    font-family: arial;
+    font-size: 95%;
+    margin: 0px;
+    padding: 20px;
+    border-left: 0px;
+}
+blockquote ol:last-child, blockquote p:last-child, blockquote ul:last-child {
+    margin-bottom: 0;
+}
+blockquote p {
+    margin-top: 0px;
+}
 .footer {
   padding-top: 20px;
   padding-bottom: 20px;
