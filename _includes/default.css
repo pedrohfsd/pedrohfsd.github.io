@@ -9,6 +9,11 @@ p {
 .h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
+.col-md-9 ul li, .col-md-9 ol li {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    line-height: 28px;
+}
 blockquote {
     background-color: #eef7fa;
     font-family: arial;
