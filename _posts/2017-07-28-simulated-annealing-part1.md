@@ -53,7 +53,7 @@ Back to our initial question another advantage of this technique is that its spe
 
 Applications
 ---
-Jump to [Part 2]({% post_url 2017-08-04-simulated-annealing-part2 %}) for a hands-on algorithm explaining how to implement Simulated Annealing to solve the Traveling Salesman Problem. 
+Jump to [Part 2]({% post_url 2017-08-04-simulated-annealing-part2 %}) for a hands-on algorithm explaining how to implement a Simulated Annealing to solve the Traveling Salesman Problem. 
 
 References
 ---
