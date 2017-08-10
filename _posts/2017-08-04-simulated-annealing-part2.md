@@ -41,7 +41,7 @@ Interactive Demo (SA applied to TSP)
   </div>
   <div class="form-btn">
     <button onclick="generate(props);" class="btn btn-default">Generate</button>
-    <button onclick="run(props, document.getElementById('temperatureId').value, document.getElementById('dropRateId').value, document.getElementById('delayId').value);" class="btn btn-primary">Run</button>
+    <button onclick="run(props.vertices, document.getElementById('temperatureId').value, document.getElementById('dropRateId').value, document.getElementById('delayId').value);" class="btn btn-primary">Run</button>
     <button onclick="resetCanvas(props, props.vertices);" class="btn btn-danger">Reset</button>
   </div>
 </div>
@@ -65,8 +65,10 @@ Interactive Demo (SA applied to TSP)
   props.context.fillText('\'Input\' the number of cities to \'Generate\' the graph and \'Run\'', props.width/2-220, props.height/2);
   props.context.font = props.fontSize+'px Arial';
 
-  function state_changed(props, event){resetCanvas(props, event.vertices);}
-  function log(props, text){setText(props, text);}
+  function state_changed(message, event){
+    resetCanvas(props, event.vertices);
+    setText(props, message);
+  }
 </script>
 
 Algorithm
