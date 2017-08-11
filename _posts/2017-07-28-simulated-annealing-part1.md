@@ -2,6 +2,7 @@
 layout: post
 title: Optimization with Simulated Annealing - Part 1
 date: 2017-07-28
+update: 2017-08-07
 ---
 
 > #### I'm dividing this post into 2 parts:
