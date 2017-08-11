@@ -19,9 +19,9 @@ This intuition is usually translated into the following procedure:
 1. Create current generation (a list of feasible answers to the problem at hand)
 1. While condition is not meet (a specific fitness values or the max number of generations)
     1. While new generation is not full
-      1. Selection (select parents based on fitness (not necessarily two), the higher the fitness higher are the chances of being selected)
-      1. Crossover (Cross them based on probability)
-      1. Mutate (mutation probability is usually low)
+        1. Selection (select parents based on fitness (not necessarily two), the higher the fitness higher are the chances of being selected)
+        1. Crossover (Cross them based on probability)
+        1. Mutate (mutation probability is usually low)
     1. Set new generation as current
     1. Elitism (the fittest of the previous generation can be included in the new one)
 1. Return the overall fittest individual
