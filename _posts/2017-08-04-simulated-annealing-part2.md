@@ -74,7 +74,7 @@ Interactive Demo (SA applied to TSP)
 
 Algorithm
 ---
-The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop){:target="_blank"} follows the 5 main steps described for Simulated Annealing in the previous [post](2017-07-28-simulated-annealing-part1) using stochastic sampling, but now applied to TSP:
+The [algorithm implementation](https://github.com/pedrohfsd/TSP/tree/develop/simulated_annealing.js){:target="_blank"} follows the 5 main steps described for Simulated Annealing in the previous [post]({% post_url 2017-07-28-simulated-annealing-part1 %}) using stochastic sampling, but now applied to TSP:
 1. Find a feasible solution for the TSP
 1. While temperature is greater than 1:
     1. Build a new solution from the current one
