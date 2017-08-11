@@ -66,4 +66,5 @@ blockquote p {
   display: block;
   color: #999;
   margin: 20px 0 20px 0px;
+  font-size: 12px;
 }
