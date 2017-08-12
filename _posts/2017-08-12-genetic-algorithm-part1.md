@@ -58,7 +58,7 @@ A chromosome is represented by a string if real number, words or any other non-u
 
 Mutation
 ---
-Based on mutation parameter, randomly change or switch or or more genes. eg. <code>AB**C**DE**F**GH</code> -> <code>AB**F**DE**C**GH</code>
+Based on mutation parameter, randomly change or switch or or more genes. eg. <code>AB<b>C</b>DE<b>F</b>GH</code> -> <code>AB<b>F</b>DE<b>C</b>GH</code>
 
 Time Complexity
 ---
