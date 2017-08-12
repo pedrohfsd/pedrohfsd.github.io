@@ -52,13 +52,13 @@ Crossover
 - **Binary Encoding**  
 A chromosome is represented by a string of sequential bits. eg. <code>10100101</code>
 - **Permutation Encoding**  
-A chromosome is represented by a string of sequential numbers or letters. eg. <code>ABDEFGC</code> 
+A chromosome is represented by a string of sequential numbers or letters. eg. <code>ABDEFGCH</code> or <code>93847565</code> 
 - **Value Encoding**  
-A chromosome is represented by a string if real number, words or any other non-unit value. eg. <code>(word1)(word3)(word4)(word5)</code>
+A chromosome is represented by a string if real number, words or any other non-unit value. eg. <code>(word1)(word3)(word4)(word5)</code> or <code>(21.5)(32.4)(1.45678)</code>
 
 Mutation
 ---
-Based on mutation parameter, randomly change or switch some genes.
+Based on mutation parameter, randomly change or switch or or more genes. eg. <code>AB**C**DE**F**GH</code> -> <code>AB**F**DE**C**GH</code>
 
 Time Complexity
 ---
