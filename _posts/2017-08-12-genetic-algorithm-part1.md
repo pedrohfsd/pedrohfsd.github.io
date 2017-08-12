@@ -21,11 +21,11 @@ This intuition is usually translated into the following procedure:
 1. Create current chromosome generation (a list of feasible answers to the problem at hand)
 1. While condition is not meet (a specific fitness values or the max number of generations)
     1. While new generation is not full
-        1. Selection (select parents based on fitness (not necessarily a pair), the higher the fitness higher are the chances of being selected)
-        1. Crossover (cross them based on probability)
-        1. Mutate (mutation probability is usually low)
+        1. **Selection** (select parents based on fitness (not necessarily a pair), the higher the fitness higher are the chances of being selected)
+        1. **Crossover** (cross them based on probability)
+        1. **Mutate** (mutation probability is usually low)
     1. Set new generation as current
-    1. Elitism (the fittest of the previous generation can be included in the new one)
+    1. **Elitism** (the fittest of the previous generation can be included in the new one)
 1. Return the overall fittest individual
 
 >For all the sections below, please consider reading the ["Introduction to Genetic Algorithms" website](http://www.obitko.com/tutorials/genetic-algorithms/index.php) for more detail. I'm adding them here mostly for quick reference.
@@ -50,11 +50,11 @@ Generate new chromosomes with the fittest parents, then copy the old generation,
 Crossover
 ---
 - **Binary Encoding**  
-A chromosome is represented by a string of sequential bits. eg. *10100101*
+A chromosome is represented by a string of sequential bits. eg. <code>10100101</code>
 - **Permutation Encoding**  
-A chromosome is represented by a string of sequential numbers or letters. eg. *ABDEFGC* 
+A chromosome is represented by a string of sequential numbers or letters. eg. <code>ABDEFGC</code> 
 - **Value Encoding**  
-A chromosome is represented by a string if real number, words or any other non-unit value. eg. *(word1)(word3)(word4)(word5)*
+A chromosome is represented by a string if real number, words or any other non-unit value. eg. <code>(word1)(word3)(word4)(word5)</code>
 
 Mutation
 ---
