@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Optimization with Genetic Algorithm - Part 1
-date: 2017-08-11
+date: 2017-08-12
 update:
 ---
 
@@ -9,7 +9,7 @@ update:
 > - Part 1 (this post): Discuss the technique definition, idea and time complexity 
 > - [Part 2 (soon): Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.]()
 
-![Evolutionary Computing](/img/evolution.svg)
+![Evolutionary Computing](/img/evolution.jpg)
 
 Member of the [Evolutionary Computing](https://en.wikipedia.org/wiki/Evolutionary_computation) set of algorithms, a *Genetic Algorithm* is a metaheuristic technique (first proposed by [John Holland](https://pt.wikipedia.org/wiki/John_Henry_Holland) in the early 1970's) based on *Darwin's theory of evolution* (which defines the idea of natural selection observed in earth's nature) that tries to gradually improve an objective function value. The analogy is that a problem's answers can be used to build a new generation of improved answers for the same problem the same way a population of individuals can be used to build a new generation of improved individuals. 
 
