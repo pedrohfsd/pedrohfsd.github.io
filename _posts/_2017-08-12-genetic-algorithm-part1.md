@@ -16,34 +16,53 @@ A really nice description for this intuition is given by Marek Obitko at his ["I
 
 This intuition is usually translated into the following procedure:
 
-1. Create current generation (a list of feasible answers to the problem at hand)
+1. Create current chromossome generation (a list of feasible answers to the problem at hand)
 1. While condition is not meet (a specific fitness values or the max number of generations)
     1. While new generation is not full
-        1. Selection (select parents based on fitness (not necessarily two), the higher the fitness higher are the chances of being selected)
-        1. Crossover (Cross them based on probability)
+        1. Selection (select parents based on fitness (not necessarily a pair), the higher the fitness higher are the chances of being selected)
+        1. Crossover (cross them based on probability)
         1. Mutate (mutation probability is usually low)
     1. Set new generation as current
     1. Elitism (the fittest of the previous generation can be included in the new one)
 1. Return the overall fittest individual
 
->For all the sections below, please consider reading the ["Introduction to Genetic Algorithms" website](http://www.obitko.com/tutorials/genetic-algorithms/index.php) for more detail. I'm just addin them for quick reference.
+>For all the sections below, please consider reading the ["Introduction to Genetic Algorithms" website](http://www.obitko.com/tutorials/genetic-algorithms/index.php) for more detail. I'm adding them mostly for quick reference.
+
+Definitions
+---
+- **Generation**: Childrens of a crossover operation
+- **Chromossome**: A set of genes; usually a feasible answer to a problem.
+- **Gene**: A single information of the chromossome; usually a bit or a single characteristic of the feasible answer.
+- **Genotype**: A particular set of genes and settings that determines the phenotype.
+- **Phenotype**: The physical expression of the genotype - the organism itself.
 
 Selection
 ---
-- Roulette Wheel Selection: Calculate the sum of fitnesses <code>S</code> from current generation and generate a random number <code>R</code> from 0 to <code>S</code>. Iterate through the current generation while accumulating each fitnesses <code>A</code>, return first indivual where <code>A</code> is greater than <code>R</code>. This selection strategy greatly benefits higher fitness individuals.
-- Rank Selection: Sort the current generation by ascending fitness. Number them from 1 to N and execute the Roulette Wheel Selection using their new number instead of their fitness. This changes the probability distribution on the Roulette Wheel Selection to be more uniform and less focused on higher fitness individuals.
-- Steady-State Selection: Generate new individuals with the fittest parents, then copy the old generation, remove low fitness individuals and the new indivuals.
+- **Roulette Wheel Selection**  
+Calculate the sum of fitnesses <code>S</code> from current generation and generate a random number <code>R</code> from 0 to <code>S</code>. Iterate through the current generation while accumulating each fitnesses <code>A</code>, return first chromossome where <code>A</code> is greater than <code>R</code>. This selection strategy greatly benefits higher fitness chromossome.
+- **Rank Selection**  
+Sort the current generation by ascending fitness. Number them from 1 to N and execute the *Roulette Wheel Selection* using their new number instead of their fitnesses. This changes the probability distribution on the *Roulette Wheel Selection* to be more uniform and less focused on higher fitness chromossomes.
+- **Steady-State Selection**  
+Generate new chromossomes with the fittest parents, then copy the old generation, remove low fitness chromossomes and add the new chromossomes.
 
 Crossover
 ---
-- Binary Encoding
-- Permutation Encoding
-- Value Encoding
-- Tree Encoding
+- **Binary Encoding**  
+A chromosome is represented by a string of sequential bits. eg. 10100101
+- **Permutation Encoding**  
+A chromosome is represented by a string of sequential numbers or letters. eg. ABDEFGC 
+- **Value Encoding**  
+
+- **Tree Encoding**  
+
 
 Mutation
 ---
 Based on mutation parameter, randomly change or switch genes.
+
+Time Complexity
+---
+
 
 Application
 ---
@@ -51,8 +70,13 @@ Application
 
 References
 ---
-1. [Wikipedia - Genetic Algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm)
-1. [Wikipedia - Evolutionary Computation](https://en.wikipedia.org/wiki/Evolutionary_computation)
 1. [Introduction to Genetic Algorithms](http://www.obitko.com/tutorials/genetic-algorithms/index.php)
 1. [Genetic Algorithms](https://www.doc.ic.ac.uk/~nd/surprise_96/journal/vol1/hmw/article1.html)
 1. [Genetic Algorithms in Plain English](http://www.ai-junkie.com/ga/intro/gat1.html)
+1. [Wikipedia - Genetic Algorithm](https://en.wikipedia.org/wiki/Genetic_algorithm)
+1. [Wikipedia - Evolutionary Computation](https://en.wikipedia.org/wiki/Evolutionary_computation)
+1. [Wikipedia - Chromosome](https://en.wikipedia.org/wiki/Chromosome)
+1. [Wikipedia - Gene](https://en.wikipedia.org/wiki/Gene)
+1. [Wikipedia - Genotype](https://en.wikipedia.org/wiki/Genotype)
+1. [Wikipedia - Phenotype](https://en.wikipedia.org/wiki/Phenotype)
+1. [Wikipedia - Generation](https://en.wikipedia.org/wiki/Generation)
