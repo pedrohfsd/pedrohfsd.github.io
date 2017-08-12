@@ -62,7 +62,7 @@ Based on mutation parameter, randomly change or switch some genes.
 
 Time Complexity
 ---
-If the main loop will run until a specific low fitness chromosome is reached, then it's difficult to predict when it will stop, or if it will stop at all. That's why a max number of generations if given to the final algorithm, to assure it will stop and to better balance it's speed/quality. In this case time complexity is mostly given by the strategy defined for *Crossover* since the number of generations, selection and mutation will be a constant number, unrelated to the input size.
+If the main loop will run until a specific low fitness chromosome is reached, then it's difficult to predict when it will stop, or if it will stop at all. That's why a max number of generations if given to the final algorithm, to assure it will stop and to better balance it's speed/quality. In this case, time complexity is mostly given by the strategy defined for *Crossover* since the number of generations, selection and mutation will be a constant number, unrelated to the input size.
 
 Application
 ---
