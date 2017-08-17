@@ -59,11 +59,11 @@ A chromosome is represented by a string of real numbers, words or any other mult
 
 Mutation
 ---
-Based on mutation parameter, randomly change or switch or or more genes. eg. <code>AB<b>C</b>DE<b>F</b>GH</code> -> <code>AB<b>F</b>DE<b>C</b>GH</code>
+Based on a mutation parameter, just randomly change or switch one or more genes. eg. <code>AB<b>C</b>DE<b>F</b>GH</code> -> <code>AB<b>F</b>DE<b>C</b>GH</code>
 
 Time Complexity
 ---
-If the main loop will run until a specific low fitness chromosome is reached, then it's difficult to predict when it will stop or if it will stop at all. That's one of the reasons why a maximum number of generations if given to the final algorithm, to assure it will stop and to better balance it's speed/quality. In this case time complexity is mostly given by the strategy defined for *Crossover* since the *Population* size, number of *Generations*, *Selection* iterations and *Mutation* iterations will be a constant number, unrelated to the input size.
+If the main loop will run until a specific low fitness chromosome is reached, then it's difficult to predict when it will stop or if it will stop at all. That's one of the reasons why a maximum number of generations if given to the final algorithm, to ensure it will stop and to better balance it's speed/quality. In this case time complexity is mostly given by the strategy defined for *Crossover* since the *Population* size, number of *Generations*, *Selection* iterations and *Mutation* iterations will be a constant number, unrelated to the input size.
 
 Application
 ---
