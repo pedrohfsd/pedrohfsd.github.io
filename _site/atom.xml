@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>https://pedrohfsd.github.io</title>
+ <link href="http://pedrohfsd.github.com/atom.xml" rel="self"/>
+ <link href="http://pedrohfsd.github.com/"/>
+ <updated>2017-10-03T12:04:26-03:00</updated>
+ <id>http://pedrohfsd.github.com/</id>
+ <author>
+   <name>Pedro Diniz</name>
+   <email>pedrohfsd@gmail.com</email>
+ </author>
+
+ 
+ <entry>
+   <title>Optimization with Genetic Algorithm - Part 1</title>
+   <link href="http://pedrohfsd.github.com/2017/08/12/genetic-algorithm-part1.html"/>
+   <updated>2017-08-12T00:00:00-03:00</updated>
+   <id>http://pedrohfsd.github.com/2017/08/12/genetic-algorithm-part1</id>
+   <content type="html">&lt;blockquote&gt;
+  &lt;h4 id=&quot;im-dividing-this-post-into-2-parts&quot;&gt;I’m dividing this post into 2 parts:&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Part 1 (this post): Discuss the technique definition, idea and time complexity&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;&quot;&gt;Part 2 (soon): Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/evolution.jpg&quot; alt=&quot;Evolutionary Computing&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Member of the &lt;a href=&quot;https://en.wikipedia.org/wiki/Evolutionary_computation&quot;&gt;Evolutionary Computing&lt;/a&gt; set of algorithms, a &lt;em&gt;Genetic Algorithm&lt;/em&gt; is a metaheuristic technique (first proposed by &lt;a href=&quot;https://pt.wikipedia.org/wiki/John_Henry_Holland&quot;&gt;John Holland&lt;/a&gt; in the early 1970’s) based on &lt;em&gt;Darwin’s theory of evolution&lt;/em&gt; (which defines the idea of natural selection observed in earth’s nature) that tries to gradually improve an objective function value. The analogy is that a problem’s answers can be used to build a new generation of improved answers for the same problem the same way a population of individuals can be used to build a new generation of improved individuals.&lt;/p&gt;
+
+&lt;p&gt;A really nice description for this intuition is given by Marek Obitko at his &lt;a href=&quot;http://www.obitko.com/tutorials/genetic-algorithms/index.php&quot;&gt;“Introduction to Genetic Algorithms” website&lt;/a&gt; (&lt;strong&gt;which is a highly recommend reading&lt;/strong&gt;):&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;A Genetic Algorithm starts “with a &lt;strong&gt;set of solutions&lt;/strong&gt; (represented by &lt;strong&gt;chromosomes&lt;/strong&gt;) called &lt;strong&gt;population&lt;/strong&gt;. Solutions from one population are taken and used to form a new population. This is motivated by a hope, that the new population will be better than the old one. Solutions which are selected to form new solutions (&lt;strong&gt;offspring&lt;/strong&gt;) are selected according to their fitness - the more suitable they are the more chances they have to reproduce. This is repeated until some condition (for example number of populations or improvement of the best solution) is satisfied.”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This intuition is usually translated into the following procedure:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create current chromosome generation (a list of feasible answers to the problem at hand)&lt;/li&gt;
+  &lt;li&gt;While condition is not meet (a specific fitness values or the max number of generations)
+    &lt;ol&gt;
+      &lt;li&gt;While new generation is not full
+        &lt;ol&gt;
+          &lt;li&gt;&lt;strong&gt;Selection&lt;/strong&gt; (select parents based on fitness (not necessarily a pair), the higher the fitness higher are the chances of being selected)&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Crossover&lt;/strong&gt; (cross them based on probability)&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Mutate&lt;/strong&gt; (mutation probability is usually low)&lt;/li&gt;
+        &lt;/ol&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Set new generation as current&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Elitism&lt;/strong&gt; (the fittest of the previous generation can be included in the new one)&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Return the overall fittest individual&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;For all the sections below, please consider reading the &lt;a href=&quot;http://www.obitko.com/tutorials/genetic-algorithms/index.php&quot;&gt;“Introduction to Genetic Algorithms” website&lt;/a&gt; for more detail. I’m adding them here mostly for quick reference.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;definitions&quot;&gt;Definitions&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Generation&lt;/strong&gt;: Children of a crossover operation&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Chromosome&lt;/strong&gt;: A set of genes; usually a feasible answer to a problem.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Population&lt;/strong&gt;: Number of chromosomes in the &lt;em&gt;Generation&lt;/em&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Gene&lt;/strong&gt;: A single information of the chromosome; usually a bit or a single characteristic of the feasible answer.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Genotype&lt;/strong&gt;: A particular set of genes and settings that determines the phenotype.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Phenotype&lt;/strong&gt;: The physical expression of the genotype - the organism itself.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;selection&quot;&gt;Selection&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Roulette Wheel Selection&lt;/strong&gt;&lt;br /&gt;
+Calculate the sum of fitnesses &lt;code&gt;S&lt;/code&gt; from current generation and generate a random number &lt;code&gt;R&lt;/code&gt; from &lt;code&gt;0&lt;/code&gt; to &lt;code&gt;S&lt;/code&gt;. Iterate through the current generation while accumulating each fitnesses &lt;code&gt;A&lt;/code&gt;, return first chromosome where &lt;code&gt;A&lt;/code&gt; is greater than &lt;code&gt;R&lt;/code&gt;. This selection strategy greatly benefits higher fitness chromosome.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Rank Selection&lt;/strong&gt;&lt;br /&gt;
+Sort the current generation by ascending fitness. Number them from &lt;code&gt;1&lt;/code&gt; to &lt;code&gt;N&lt;/code&gt; and execute the &lt;em&gt;Roulette Wheel Selection&lt;/em&gt; using their new number instead of their fitnesses. This changes the probability distribution on the &lt;em&gt;Roulette Wheel Selection&lt;/em&gt; to be more uniform and less focused on higher fitness chromosomes.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Steady-State Selection&lt;/strong&gt;&lt;br /&gt;
+Generate new chromosomes with the fittest parents, then copy the old generation, remove low fitness chromosomes and add the new chromosomes.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;crossover&quot;&gt;Crossover&lt;/h2&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Binary Encoding&lt;/strong&gt;&lt;br /&gt;
+A chromosome is represented by a string of sequential bits. eg. &lt;code&gt;10100101&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Permutation Encoding&lt;/strong&gt;&lt;br /&gt;
+A chromosome is represented by a string of sequential numbers or letters. eg. &lt;code&gt;ABDEFGCH&lt;/code&gt; or &lt;code&gt;93847565&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Value Encoding&lt;/strong&gt;&lt;br /&gt;
+A chromosome is represented by a string of real numbers, words or any other multicharacter value. eg. &lt;code&gt;(word1)(word3)(word4)(word5)&lt;/code&gt; or &lt;code&gt;(21.5)(32.4)(1.45678)&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;mutation&quot;&gt;Mutation&lt;/h2&gt;
+&lt;p&gt;Based on a mutation parameter, just randomly change or switch one or more genes. eg. &lt;code&gt;AB&lt;b&gt;C&lt;/b&gt;DE&lt;b&gt;F&lt;/b&gt;GH&lt;/code&gt; -&amp;gt; &lt;code&gt;AB&lt;b&gt;F&lt;/b&gt;DE&lt;b&gt;C&lt;/b&gt;GH&lt;/code&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;time-complexity&quot;&gt;Time Complexity&lt;/h2&gt;
+&lt;p&gt;If the main loop will run until a specific low fitness chromosome is reached, then it’s difficult to predict when it will stop or if it will stop at all. That’s one of the reasons why a maximum number of generations if given to the final algorithm, to ensure it will stop and to better balance it’s speed/quality. In this case time complexity is mostly given by the strategy defined for &lt;em&gt;Crossover&lt;/em&gt; since the &lt;em&gt;Population&lt;/em&gt; size, number of &lt;em&gt;Generations&lt;/em&gt;, &lt;em&gt;Selection&lt;/em&gt; iterations and &lt;em&gt;Mutation&lt;/em&gt; iterations will be a constant number, unrelated to the input size.&lt;/p&gt;
+
+&lt;h2 id=&quot;application&quot;&gt;Application&lt;/h2&gt;
+&lt;p&gt;Jump to &lt;a href=&quot;&quot;&gt;Part 2 (soon)&lt;/a&gt; for a hands-on algorithm explaining how to implement a Genetic Algorithm to solve the Traveling Salesman Problem.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mitpress.mit.edu/books/introduction-genetic-algorithms&quot;&gt;An introduction to Genetic Algorithms&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.obitko.com/tutorials/genetic-algorithms/index.php&quot;&gt;Introduction to Genetic Algorithms&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.doc.ic.ac.uk/~nd/surprise_96/journal/vol1/hmw/article1.html&quot;&gt;Genetic Algorithms&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ai-junkie.com/ga/intro/gat1.html&quot;&gt;Genetic Algorithms in Plain English&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Genetic_algorithm&quot;&gt;Wikipedia - Genetic Algorithm&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Evolutionary_computation&quot;&gt;Wikipedia - Evolutionary Computation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Chromosome&quot;&gt;Wikipedia - Chromosome&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Gene&quot;&gt;Wikipedia - Gene&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Genotype&quot;&gt;Wikipedia - Genotype&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Phenotype&quot;&gt;Wikipedia - Phenotype&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Generation&quot;&gt;Wikipedia - Generation&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Optimization with 2-OPT - Part 2 - Animated TSP Solver</title>
+   <link href="http://pedrohfsd.github.com/2017/08/11/2opt-part2.html"/>
+   <updated>2017-08-11T00:00:00-03:00</updated>
+   <id>http://pedrohfsd.github.com/2017/08/11/2opt-part2</id>
+   <content type="html">&lt;blockquote&gt;
+  &lt;h4 id=&quot;im-dividing-this-post-into-2-parts&quot;&gt;I’m dividing this post into 2 parts:&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;/2017/08/09/2opt-part1.html&quot;&gt;Part 1: Discuss the technique definition, idea and time complexity.&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;Part 2 (this post): Applies this technique to a real problem by implementing an heuristic algorithm for the Traveling Salesman Problem.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;interactive-demo-2-opt-applied-to-tsp&quot;&gt;Interactive Demo (2-OPT applied to TSP)&lt;/h2&gt;
+&lt;script&gt;function generate(props){
+    props.vertices = [];
+    for(let i=0; i&lt;props.verticeCount(); i++){
+        x = Math.floor((Math.random() * (props.width-2*props.margin)) + props.margin);
+        y = Math.floor((Math.random() * (props.height-2*props.margin)) + props.margin);
+        props.vertices.push([x,y]);
+    }
+    resetCanvas(props, props.vertices);
+    setText(props, &quot;Ready!&quot;);
+}
+
+function resetCanvas(props, vertices){
+    if(vertices.length == 0) return;
+    props.context.fillStyle = props.background;
+    props.context.fillRect(0, 0, props.canvas.width, props.canvas.height);
+    addPoint(vertices[0]);
+    for(let i=1; i&lt;vertices.length; i++){
+        addLine(props, vertices[i-1], vertices[i]);
+        addPoint(vertices[i]);
+    }
+    addLine(props, vertices[vertices.length-1], vertices[0]);
+    setText(props, &quot;Ready!&quot;);
+}
+
+function addPoint(vertice){
+    props.context.strokeStyle = '#34CA34';
+    props.context.setLineDash([2, 0]);
+    props.context.fillStyle = '#34CA34';
+    props.context.beginPath();
+    props.context.arc(vertice[0], vertice[1], 4, 0, 2 * Math.PI, false);
+    props.context.fill();
+    props.context.stroke();
+    props.context.closePath();
+}
+
+function addLine(props, vertice1, vertice2){
+    // props.context.strokeStyle = '#C3CEEE';
+    props.context.beginPath();
+    props.context.strokeStyle = 'white';
+    props.context.setLineDash([5, 3]);
+    props.context.moveTo(vertice1[0], vertice1[1]);
+    props.context.lineTo(vertice2[0], vertice2[1]);
+    props.context.stroke();
+    props.context.closePath();
+}
+
+function setText(props, text){
+    props.context.fillStyle = props.background;
+    props.context.fillRect(5, props.height-props.fontSize-4, props.width, props.fontSize+4);
+    props.context.fillStyle = 'white';
+    props.context.fillText(text, 5, props.height-4);
+}
+&lt;/script&gt;
+
+&lt;script src=&quot;https://rawgit.com/pedrohfsd/TSP/develop/2opt.js&quot;&gt;&lt;/script&gt;
+
+&lt;div class=&quot;well canvas-demo&quot;&gt;
+  &lt;canvas id=&quot;canvas&quot; width=&quot;640px&quot; height=&quot;490&quot;&gt;&lt;/canvas&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;cityCountId&quot; value=&quot;60&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;cityCountId&quot;&gt; Cities&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;iterationsId&quot; value=&quot;200&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;iterationsId&quot;&gt; Iterations Limit&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;delayId&quot; value=&quot;20&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;delayId&quot;&gt; Delay (in millis)&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-btn&quot;&gt;
+    &lt;button onclick=&quot;generate(props);&quot; class=&quot;btn btn-default&quot;&gt;Generate&lt;/button&gt;
+    &lt;button onclick=&quot;run(props.vertices, document.getElementById('iterationsId').value, document.getElementById('delayId').value);&quot; class=&quot;btn btn-primary&quot;&gt;Run&lt;/button&gt;
+    &lt;button onclick=&quot;resetCanvas(props, props.vertices);&quot; class=&quot;btn btn-danger&quot;&gt;Reset&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  var props = {canvas:null, context:null
+              , width:640
+              , height:490
+              , margin:30
+              , fontSize:14
+              , verticeCount:function(){return document.getElementById('cityCountId').value}
+              , vertices:[]
+              , background:'#5F636C'
+              };
+  props.canvas = document.getElementById('canvas');
+  props.context = props.canvas.getContext('2d');
+  props.context.font = (props.fontSize+2)+'px Arial';
+  props.context.fillStyle = props.background;
+  props.context.fillRect(0, 0, props.width, props.height);
+  props.context.fillStyle = 'white';
+  props.context.fillText('\'Input\' the number of cities to \'Generate\' the graph and \'Run\'', props.width/2-220, props.height/2);
+  props.context.font = props.fontSize+'px Arial';
+
+  function state_changed(message, event){
+    resetCanvas(props, event.vertices);
+    setText(props, message);
+  }
+&lt;/script&gt;
+
+&lt;h2 id=&quot;algorithm&quot;&gt;Algorithm&lt;/h2&gt;
+&lt;p&gt;The &lt;a href=&quot;https://github.com/pedrohfsd/TSP/tree/develop/2opt.js&quot; target=&quot;_blank&quot;&gt;algorithm implementation&lt;/a&gt; follows the 3 main steps described for Simulated Annealing in the previous &lt;a href=&quot;/2017/08/09/2opt-part1.html&quot;&gt;post&lt;/a&gt; using stochastic sampling, but now applied to TSP:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;ol&gt;
+    &lt;li&gt;Find a trial Solution \(s \in S\), for which M(s) is as small as we can make it at a first try.&lt;/li&gt;
+    &lt;li&gt;Apply some transformations, called ‘inversions’, which transforms this trial solutions into some other elements of S, whose measures are progressive smaller.&lt;/li&gt;
+    &lt;li&gt;Check C for elements which might be included in the final s at an advantage. If there are any such elements try to find a transformation which decreases the measure of the sequence.&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The JavaScript code follows (and for any other language really, the implementation is trivial):&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;table style=&quot;border-spacing: 0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot; style=&quot;text-align: right&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;two_opt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;swap&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;concat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currentTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currentTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;swap&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)};&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;That’s pretty much the algorithm behind the interactive demo at the beginning of this page. It is executed until the given ‘iteration limit’ is reached or until there’s no cost improvement after reversing the edges, whatever comes first.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Simulated_annealing&quot; target=&quot;_blank&quot;&gt;Wikipedia - Simulated Annealing&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1126%2Fscience.220.4598.671&quot; target=&quot;_blank&quot;&gt;Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. “Optimization by simulated annealing.” science 220.4598 (1983): 671-680.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1007%2FBF00940812&quot; target=&quot;_blank&quot;&gt;Černý, V. (1985). “Thermodynamical approach to the traveling salesman problem: An efficient simulation algorithm”. Journal of Optimization Theory and Applications. 45: 41–51.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1107%2FS0108767385000563&quot; target=&quot;_blank&quot;&gt;Semenovskaya, S.; Khachaturyan, K.; Khachaturyan, A. (1985). “Statistical Mechanics Approach to the Determination of a Crystal”. Acta Crystallographica (A41): 268–273.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jasmcole.com/2014/11/16/annealing-the-underground/&quot; target=&quot;_blank&quot;&gt;Almost Looks Like Work by Jason Cole&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Local_optimum&quot; target=&quot;_blank&quot;&gt;Wikipedia - Local optimum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Maxima_and_minima&quot; target=&quot;_blank&quot;&gt;Wikipedia - Maxima and minima&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Optimization with 2-OPT - Part 1</title>
+   <link href="http://pedrohfsd.github.com/2017/08/09/2opt-part1.html"/>
+   <updated>2017-08-09T00:00:00-03:00</updated>
+   <id>http://pedrohfsd.github.com/2017/08/09/2opt-part1</id>
+   <content type="html">&lt;blockquote&gt;
+  &lt;h4 id=&quot;im-dividing-this-post-into-2-parts&quot;&gt;I’m dividing this post into 2 parts:&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Part 1 (this post): Discuss the technique definition, idea and time complexity&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;/2017/08/11/2opt-part2.html&quot;&gt;Part 2: Applies this technique to a real problem by implementing an heuristic algorithm for the Traveling Salesman Problem.&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The 2-OPT technique was first proposed by &lt;a href=&quot;https://doi.org/10.1287/opre.6.6.791&quot;&gt;Croes&lt;/a&gt; in 1958. In his paper he defines the technique as an optimized solution for the Traveling Salesman Problem for both symmetric and asymmetric instances (the latter requiring more work). There’s no guarantee that this technique will find a global optimum answer, instead, the returning answer is usually said to be 2-optimal, making it an &lt;a href=&quot;https://en.wikipedia.org/wiki/Heuristic&quot;&gt;heuristic&lt;/a&gt;. What it actually does is to gradually improve an, initially given, feasible answer (local search) until it reaches a local optimum and no more improvements can be made. Improvements are done using what he calls of “‘inversions’”.&lt;/p&gt;
+
+&lt;p&gt;Accordingly to &lt;a href=&quot;https://doi.org/10.1287/opre.6.6.791&quot;&gt;Croes&lt;/a&gt; own words the technique can be described as:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;ol&gt;
+    &lt;li&gt;Find a trial Solution \(s \in S\), for which M(s) is as small as we can make it at a first try.&lt;/li&gt;
+    &lt;li&gt;Apply some transformations, called ‘inversions’, which transforms this trial solutions into some other elements of S, whose measures are progressive smaller.&lt;/li&gt;
+    &lt;li&gt;Check C for elements which might be included in the final s at an advantage. If there are any such elements try to find a transformation which decreases the measure of the sequence.&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;The idea is to repeat the above procedure until there’s no improvement. Although real world observations indicated that the algorithm converges quickly, theoretically it can take exponential time.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-does-it-works&quot;&gt;Why Does It Works?&lt;/h2&gt;
+&lt;p&gt;It works because it removes crossings, the image below illustrates this issue.
+&lt;img src=&quot;/img/2opt.png&quot; alt=&quot;Removing crossings&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;This is the same as changing E,A,C,B,D,F,E into E,A,B,C,D,F,E. Visually one can intuitively associate this to a rectangle and note that A,C and B,D are like diagonals which would then be greater than the laterals A,B and C,D. This is obviously a generalization though.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/2-opt&quot;&gt;Wikipedia&lt;/a&gt; gives a good example of this procedure:&lt;/p&gt;
+&lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;2optSwap(route, i, k) {
+     1. take route[1] to route[i-1] and add them in order to new_route
+     2. take route[i] to route[k] and add them in reverse order to new_route
+     3. take route[k+1] to end and add them in order to new_route
+     return new_route;
+ }
+
+Here is an example of the above with arbitrary input:
+
+example route: A ==&amp;gt; B ==&amp;gt; C ==&amp;gt; D ==&amp;gt; E ==&amp;gt; F ==&amp;gt; G ==&amp;gt; H ==&amp;gt; A  
+   example i = 4, example k = 7  
+   new_route:  
+       1. (A ==&amp;gt; B ==&amp;gt; C)  
+       2. A ==&amp;gt; B ==&amp;gt; C ==&amp;gt; (G ==&amp;gt; F ==&amp;gt; E ==&amp;gt; D)  
+       3. A ==&amp;gt; B ==&amp;gt; C ==&amp;gt; G ==&amp;gt; F ==&amp;gt; E ==&amp;gt; D (==&amp;gt; H ==&amp;gt; A)
+
+This is the complete 2-opt swap making use of the above mechanism:
+
+   repeat until no improvement is made {
+       start_again:
+       best_distance = calculateTotalDistance(existing_route)
+       for (i = 0; i &amp;lt; number of nodes eligible to be swapped - 1; i++) {
+           for (k = i + 1; k &amp;lt; number of nodes eligible to be swapped; k++) {
+               new_route = 2optSwap(existing_route, i, k)
+               new_distance = calculateTotalDistance(new_route)
+               if (new_distance &amp;lt; best_distance) {
+                   existing_route = new_route
+                   goto start_again
+               }
+           }
+       }
+   }
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+
+&lt;p&gt;In python (considering your tour is {A,B,C,D,E,F,G,A}, that is, contains the start point again in the end) the complete procedure will be:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;table style=&quot;border-spacing: 0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot; style=&quot;text-align: right&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;two_opt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;best&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;improved&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;improved&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;n&quot;&gt;improved&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;False&lt;/span&gt;
+          &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+               &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;range&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)):&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;continue&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# changes nothing, skip then&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;new_route&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:]&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;new_route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;j&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# this is the 2woptSwap&lt;/span&gt;
+                    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;new_route&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;best&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+                         &lt;span class=&quot;n&quot;&gt;best&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;new_route&lt;/span&gt;
+                         &lt;span class=&quot;n&quot;&gt;improved&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+          &lt;span class=&quot;n&quot;&gt;route&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;best&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;best&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;convergence&quot;&gt;Convergence&lt;/h2&gt;
+&lt;p&gt;Although fast convergence is not guaranteed it is commonly observed in many real world applications of this technique. A &lt;a href=&quot;http://dl.acm.org/citation.cfm?id=2284491&quot;&gt;recent study&lt;/a&gt; approximates it to be in the order of the number of cities. This makes it a popular heuristic with many practical applications in &lt;a href=&quot;https://en.wikipedia.org/wiki/Travelling_salesman_problem&quot;&gt;TSP&lt;/a&gt;, &lt;a href=&quot;https://en.wikipedia.org/wiki/Vehicle_routing_problem&quot;&gt;VRP&lt;/a&gt; and &lt;a href=&quot;https://en.wikipedia.org/wiki/Vehicle_routing_problem&quot;&gt;CVRP&lt;/a&gt;. It can also be used in other metaheuristic algorithms such as &lt;a href=&quot;https://en.wikipedia.org/wiki/Genetic_algorithm&quot;&gt;Genetic Algorithms&lt;/a&gt; and &lt;a href=&quot;/2017/07/28/simulated-annealing-part1.html&quot;&gt;Simulated Annealing&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;time-complexity&quot;&gt;Time Complexity&lt;/h2&gt;
+&lt;p&gt;Much has been researched about its time complexity, theoretical proves are rather complex and a &lt;a href=&quot;http://dl.acm.org/citation.cfm?id=1283522&quot;&gt;recommended reading&lt;/a&gt; is given for this in the “References” section of this post. What appears to be the most intuitive and common answer for this procedure is \(O(n!)\). At each iteration the algorithm can apply at most \(O(n^2)\) inversions but the number of overall iterations is weakly bounded by \(O(n!)\) since by removing a crossing the algorithm can consequently create new ones leading to the worst case scenario where all possibilities are tested.&lt;/p&gt;
+
+&lt;h2 id=&quot;applications&quot;&gt;Applications&lt;/h2&gt;
+&lt;p&gt;Jump to &lt;a href=&quot;/2017/08/11/2opt-part2.html&quot;&gt;Part 2&lt;/a&gt; for a hands-on algorithm explaining how to implement a 2-OPT to solve the Traveling Salesman Problem.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1287/opre.6.6.791&quot;&gt;Croes, Georges A. “A method for solving traveling-salesman problems.” Operations research 6.6 (1958): 791-812.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://dl.acm.org/citation.cfm?id=1283522&quot;&gt;Englert, Matthias, Heiko Röglin, and Berthold Vöcking. “Worst case and probabilistic analysis of the 2-Opt algorithm for the TSP.” Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms. Society for Industrial and Applied Mathematics, 2007.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/2-opt&quot;&gt;Wikipedia 2-opt&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Heuristic&quot;&gt;Wikipedia - Heuristic&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Travelling_salesman_problem&quot;&gt;Wikipedia - TSP&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Vehicle_routing_problem&quot;&gt;Wikipedia - VRP&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Vehicle_routing_problem&quot;&gt;Wikipedia - CVRP&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.technical-recipes.com/2012/applying-c-implementations-of-2-opt-to-travelling-salesman-problems/&quot;&gt;Technical Recipe - C++ Implementation of 2-opt to the “Att48” Travelling Salesman Problem&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cs.stackexchange.com/questions/73784/why-doesnt-2-opt-return-an-optimal-solution&quot;&gt;StackExchange - Why doesnt 2 opt return an optimal solution&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://codereview.stackexchange.com/questions/72265/2-opt-algorithm-for-traveling-salesman&quot;&gt;2-opt algorithm for traveling salesman&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://dl.acm.org/citation.cfm?id=2284491&quot;&gt;Average-case approximation ratio of the 2-opt algorithm for the TSP&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Optimization with Simulated Annealing - Part 2 - Animated TSP Solver</title>
+   <link href="http://pedrohfsd.github.com/2017/08/04/simulated-annealing-part2.html"/>
+   <updated>2017-08-04T00:00:00-03:00</updated>
+   <id>http://pedrohfsd.github.com/2017/08/04/simulated-annealing-part2</id>
+   <content type="html">&lt;blockquote&gt;
+  &lt;h4 id=&quot;im-dividing-this-post-into-2-parts&quot;&gt;I’m dividing this post into 2 parts:&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;/2017/07/28/simulated-annealing-part1.html&quot;&gt;Part 1 : Discuss the technique definition, idea and advantages&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;Part 2 (this post) : Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;interactive-demo-sa-applied-to-tsp&quot;&gt;Interactive Demo (SA applied to TSP)&lt;/h2&gt;
+&lt;script&gt;function generate(props){
+    props.vertices = [];
+    for(let i=0; i&lt;props.verticeCount(); i++){
+        x = Math.floor((Math.random() * (props.width-2*props.margin)) + props.margin);
+        y = Math.floor((Math.random() * (props.height-2*props.margin)) + props.margin);
+        props.vertices.push([x,y]);
+    }
+    resetCanvas(props, props.vertices);
+    setText(props, &quot;Ready!&quot;);
+}
+
+function resetCanvas(props, vertices){
+    if(vertices.length == 0) return;
+    props.context.fillStyle = props.background;
+    props.context.fillRect(0, 0, props.canvas.width, props.canvas.height);
+    addPoint(vertices[0]);
+    for(let i=1; i&lt;vertices.length; i++){
+        addLine(props, vertices[i-1], vertices[i]);
+        addPoint(vertices[i]);
+    }
+    addLine(props, vertices[vertices.length-1], vertices[0]);
+    setText(props, &quot;Ready!&quot;);
+}
+
+function addPoint(vertice){
+    props.context.strokeStyle = '#34CA34';
+    props.context.setLineDash([2, 0]);
+    props.context.fillStyle = '#34CA34';
+    props.context.beginPath();
+    props.context.arc(vertice[0], vertice[1], 4, 0, 2 * Math.PI, false);
+    props.context.fill();
+    props.context.stroke();
+    props.context.closePath();
+}
+
+function addLine(props, vertice1, vertice2){
+    // props.context.strokeStyle = '#C3CEEE';
+    props.context.beginPath();
+    props.context.strokeStyle = 'white';
+    props.context.setLineDash([5, 3]);
+    props.context.moveTo(vertice1[0], vertice1[1]);
+    props.context.lineTo(vertice2[0], vertice2[1]);
+    props.context.stroke();
+    props.context.closePath();
+}
+
+function setText(props, text){
+    props.context.fillStyle = props.background;
+    props.context.fillRect(5, props.height-props.fontSize-4, props.width, props.fontSize+4);
+    props.context.fillStyle = 'white';
+    props.context.fillText(text, 5, props.height-4);
+}
+&lt;/script&gt;
+
+&lt;script src=&quot;https://rawgit.com/pedrohfsd/TSP/develop/simulated_annealing.js&quot;&gt;&lt;/script&gt;
+
+&lt;div class=&quot;well canvas-demo&quot;&gt;
+  &lt;canvas id=&quot;canvas&quot; width=&quot;640px&quot; height=&quot;490&quot;&gt;&lt;/canvas&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;cityCountId&quot; value=&quot;20&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;cityCountId&quot;&gt; Cities&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;temperatureId&quot; value=&quot;1000&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;temperatureId&quot;&gt; Initial Temperature&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;dropRateId&quot; value=&quot;0.05&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;dropRateId&quot;&gt; Temperature Drop Rate (between 0 and 1)&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-inline&quot;&gt;
+    &lt;div class=&quot;form-group&quot;&gt;
+      &lt;input id=&quot;delayId&quot; value=&quot;20&quot; size=&quot;5&quot; class=&quot;form-control&quot; /&gt;
+      &lt;label for=&quot;delayId&quot;&gt; Delay (in millis)&lt;/label&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;form-btn&quot;&gt;
+    &lt;button onclick=&quot;generate(props);&quot; class=&quot;btn btn-default&quot;&gt;Generate&lt;/button&gt;
+    &lt;button onclick=&quot;run(props.vertices, document.getElementById('temperatureId').value, document.getElementById('dropRateId').value, document.getElementById('delayId').value);&quot; class=&quot;btn btn-primary&quot;&gt;Run&lt;/button&gt;
+    &lt;button onclick=&quot;resetCanvas(props, props.vertices);&quot; class=&quot;btn btn-danger&quot;&gt;Reset&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  var props = {canvas:null, context:null
+              , width:640
+              , height:490
+              , margin:30
+              , fontSize:14
+              , verticeCount:function(){return document.getElementById('cityCountId').value}
+              , vertices:[]
+              , background:'#5F636C'
+              };
+  props.canvas = document.getElementById('canvas');
+  props.context = props.canvas.getContext('2d');
+  props.context.font = (props.fontSize+2)+'px Arial';
+  props.context.fillStyle = props.background;
+  props.context.fillRect(0, 0, props.width, props.height);
+  props.context.fillStyle = 'white';
+  props.context.fillText('\'Input\' the number of cities to \'Generate\' the graph and \'Run\'', props.width/2-220, props.height/2);
+  props.context.font = props.fontSize+'px Arial';
+
+  function state_changed(message, event){
+    resetCanvas(props, event.vertices);
+    setText(props, message);
+  }
+&lt;/script&gt;
+
+&lt;h2 id=&quot;algorithm&quot;&gt;Algorithm&lt;/h2&gt;
+&lt;p&gt;The &lt;a href=&quot;https://github.com/pedrohfsd/TSP/tree/develop/simulated_annealing.js&quot; target=&quot;_blank&quot;&gt;algorithm implementation&lt;/a&gt; follows the 5 main steps described for Simulated Annealing in the previous &lt;a href=&quot;/2017/07/28/simulated-annealing-part1.html&quot;&gt;post&lt;/a&gt; using stochastic sampling, but now applied to TSP:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Find a feasible solution for the TSP&lt;/li&gt;
+  &lt;li&gt;While temperature is greater than 1:
+    &lt;ol&gt;
+      &lt;li&gt;Build a new solution from the current one&lt;/li&gt;
+      &lt;li&gt;Try to use the new answer
+        &lt;ol&gt;
+          &lt;li&gt;If new solution is better than current use new solution as current, keep the best overall&lt;/li&gt;
+          &lt;li&gt;Else If \(e^{\frac{current-new}{temperature}} &amp;gt; random(0,1)\), use new solution as current&lt;/li&gt;
+        &lt;/ol&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Decrement temperature&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Return the overall best answer&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The JavaScript code follows (and for any other language really, the implementation is trivial):&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-javascript&quot; data-lang=&quot;javascript&quot;&gt;&lt;table style=&quot;border-spacing: 0&quot;&gt;&lt;tbody&gt;&lt;tr&gt;&lt;td class=&quot;gutter gl&quot; style=&quot;text-align: right&quot;&gt;&lt;pre class=&quot;lineno&quot;&gt;1
+2
+3
+4
+5
+6
+7
+8
+9&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;temperature&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;findNeighbour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;currTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cost&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;temperature&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()){&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;currTour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Math&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;currTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;temperature&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dropRate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// make it cooler&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;bestTour&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;/table&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Voila! That’s pretty much the algorithm behind the interactive demo at the beginning of this page. Quite naive in some aspects, yes, but faithful tied to the theory.&lt;/p&gt;
+
+&lt;h2 id=&quot;those-small-details&quot;&gt;Those small details&lt;/h2&gt;
+&lt;p&gt;Yeah, I know! There’s always some minor, but important, details of implementation that usually gone missing but, don’t worry, I’ll ty to cover them all. Let’s repeat the steps but this time going diving into implementation details:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Find a feasible solution for the TSP&lt;/strong&gt;: A TSP problem is, by convention, a complete graph (edge from everyone to everyone) so to find a valid tour (hamiltonian cycle) one can just list the cities (vertices) without repetition. Ex. If there are five 5 cities={A,B,C,D,E}, then A-B-C-D-E-A is already a valid tour and so is any random distinct other like C,B,D,E,A,C.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;While temperature is greater than 1&lt;/strong&gt;:
+    &lt;ol&gt;
+      &lt;li&gt;&lt;strong&gt;Build a new solution from the current one&lt;/strong&gt;: this one can be tricky because this step is very important, an intelligent method here can quite improve the convergence of the algorithm. Although we want to find a random new answer it is no entirely random because we must use the current one to do this and, while we want it to be different from the current, we also want to change it way da it can somehow improve convergence as we just saw. The algorithm of this post chooses 2 random cities and swap them, you can see that ir works it is obviously quite naive.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Try to use the new answer&lt;/strong&gt;
+        &lt;ol&gt;
+          &lt;li&gt;&lt;strong&gt;If the new solution is less than or equal to current one use the new solution as current&lt;/strong&gt;: we are after the best possible answer, if we found one we should keep it.&lt;/li&gt;
+          &lt;li&gt;&lt;strong&gt;Else If \(E^{\frac{current-new}{temperature}} &amp;gt; random(0,1)\), use the new solution as current&lt;/strong&gt;: here lies all the mathematical fun =D. We will talk about this more in a few, for now we just need to understand that both sides of the equation will return a number between 0 and 1. So based on their sizes there will be more/less chances to evaluate to true;&lt;/li&gt;
+        &lt;/ol&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Keep the overall best answer&lt;/strong&gt;: again, we are after the best possible answer so if we found one we should keep it.&lt;/li&gt;
+      &lt;li&gt;&lt;strong&gt;Decrement temperature&lt;/strong&gt;: make it some percent smaller so we can, eventually, end the algorithm&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Return the overall best answer: that’s it, our algorithm succeeded (well, it found an answer at least).&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;the-mathematical-fun&quot;&gt;The Mathematical Fun&lt;/h2&gt;
+&lt;p&gt;You may be challenged by the equation:
+\[e^{\frac{current-new}{temperature}} &amp;gt; random(0,1)\]
+Don’ be. Just take a closer look at it and you will understand it. Everytime you reach this line of code is because \(current&amp;gt;new\), so this subtraction always return a number \(&amp;lt; 0\). This negative result will then be divided by the current temperature so:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;if the temperature is high then the negative number will be divided by a big number making it small&lt;/li&gt;
+  &lt;li&gt;else the negative number will be divided by a small number making it big.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Remember, though, that we are making “e” to the power of this negative number so it’s an inverse relationship, the bigger the negative number is the smaller will be ‘e’ to its power, ex. \(e^{-x}&amp;gt;e^{-2x}\).&lt;br /&gt;
+At the final part we are comparing the result to see if it’s bigger than a random number \(0\leq random(0,1)&amp;lt;1\) so the bigger the result is, more likely it is to be greater than the randomly generated number. More especifically: if temperature is high, higher are the chances that the result will be greater than the randomly generated number.&lt;/p&gt;
+
+&lt;p&gt;The real challenge of this equation is demonstrating the probabilities in play, something in which we are better of reading &lt;a href=&quot;https://doi.org/10.1126%2Fscience.220.4598.671&quot; target=&quot;_blank&quot;&gt;one of the papers&lt;/a&gt; that originated it.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Simulated_annealing&quot; target=&quot;_blank&quot;&gt;Wikipedia - Simulated Annealing&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1126%2Fscience.220.4598.671&quot; target=&quot;_blank&quot;&gt;Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. “Optimization by simulated annealing.” science 220.4598 (1983): 671-680.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1007%2FBF00940812&quot; target=&quot;_blank&quot;&gt;Černý, V. (1985). “Thermodynamical approach to the traveling salesman problem: An efficient simulation algorithm”. Journal of Optimization Theory and Applications. 45: 41–51.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1107%2FS0108767385000563&quot; target=&quot;_blank&quot;&gt;Semenovskaya, S.; Khachaturyan, K.; Khachaturyan, A. (1985). “Statistical Mechanics Approach to the Determination of a Crystal”. Acta Crystallographica (A41): 268–273.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jasmcole.com/2014/11/16/annealing-the-underground/&quot; target=&quot;_blank&quot;&gt;Almost Looks Like Work by Jason Cole&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Local_optimum&quot; target=&quot;_blank&quot;&gt;Wikipedia - Local optimum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Maxima_and_minima&quot; target=&quot;_blank&quot;&gt;Wikipedia - Maxima and minima&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Optimization with Simulated Annealing - Part 1</title>
+   <link href="http://pedrohfsd.github.com/2017/07/28/simulated-annealing-part1.html"/>
+   <updated>2017-07-28T00:00:00-03:00</updated>
+   <id>http://pedrohfsd.github.com/2017/07/28/simulated-annealing-part1</id>
+   <content type="html">&lt;blockquote&gt;
+  &lt;h4 id=&quot;im-dividing-this-post-into-2-parts&quot;&gt;I’m dividing this post into 2 parts:&lt;/h4&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Part 1 (this post): Discuss the technique definition, idea and advantages&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;/2017/08/04/simulated-annealing-part2.html&quot;&gt;Part 2: Applies this technique to a real problem by implementing a metaheuristic algorithm for the Traveling Salesman Problem.&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;/img/annealing.jpg&quot; alt=&quot;Annealing&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;definition&quot;&gt;Definition&lt;/h2&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“Simulated annealing (SA) is a probabilistic technique for approximating the global optimum of a given function. Specifically, it is a metaheuristic to approximate global optimization in a large search space” (&lt;a href=&quot;https://en.wikipedia.org/wiki/Simulated_annealing&quot; target=&quot;_blank&quot;&gt;Wikipedia 2017&lt;/a&gt;).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In other words, Simulated Annealing can be seen as a search strategy to help you find a good answer when finding the optimum one is impractical. It is very handy at finding answers to combinatorial problems (especially np-complete ones since we still don’t know a Turing-deterministic polynomial time algorithm to solve them) when you don’t have enough time or resource to waste by letting an exact algorithm (eg, a brute-force or Branch and Bound) finish.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-technique&quot;&gt;The Technique&lt;/h2&gt;
+&lt;p&gt;Ok then, so what about this technique? What’s the idea behind it? Let’s look at &lt;a href=&quot;https://en.wikipedia.org/wiki/Simulated_annealing&quot; target=&quot;_blank&quot;&gt;Wikipedia&lt;/a&gt; again:&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;“The name and inspiration come from annealing in metallurgy, a technique involving heating and controlled cooling of a material to increase the size of its crystals and reduce their defects. Both are attributes of the material that depend on its thermodynamic free energy. Heating and cooling the material affects both the temperature and the thermodynamic free energy […] This notion of slow cooling implemented in the Simulated Annealing algorithm is interpreted as a slow decrease in the probability of accepting worse solutions as the solution space is explored (accepting worse solutions is a fundamental property of metaheuristics because it allows for a more extensive search for the optimal solution). The simulation can be performed either by a solution of kinetic equations for density functions […] or by using the stochastic sampling method” (&lt;a href=&quot;https://doi.org/10.1126%2Fscience.220.4598.671&quot; target=&quot;_blank&quot;&gt;ref2&lt;/a&gt;, &lt;a href=&quot;https://doi.org/10.1007%2FBF00940812&quot; target=&quot;_blank&quot;&gt;ref3&lt;/a&gt; and &lt;a href=&quot;https://doi.org/10.1107%2FS0108767385000563&quot; target=&quot;_blank&quot;&gt;ref4&lt;/a&gt;)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;In other words, the idea behind this technique is somewhat similar to that of a heated metal. When it’s hot enough (within a high temperature) the, before rigid/non-malleable/uneven, metal becomes malleable again until the heat is dissipated and the temperature drops making it rigid again. The analogy this makes into solving combinatorial problems is that we can think of the problem as a metal within a high temperature: we find a feasible solution and try to improve it as the temperature drops. Initially we will be able to try most of the possibilities, even if doesn’t actually improves the current answer, because the metal is hot and we can easily mold it, but as the temperature drops we become less tolerant and only possibilities that do improve the answer can be tested until the metal is rigid again and we can’t test any possibility anymore, returning as solution the best answer seen so far.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Let’s divide this process into 5 main steps then&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol&gt;
+  &lt;li&gt;Find a feasible solution&lt;/li&gt;
+  &lt;li&gt;Use the current solution to create a new one&lt;/li&gt;
+  &lt;li&gt;Check if we should use the new answer
+    &lt;ol&gt;
+      &lt;li&gt;If new solution is better than current one use the new one as current&lt;/li&gt;
+      &lt;li&gt;Else depending how bad the new one is and how hot we are let’s check if we should keep it (kinetic equations or stochastic sampling)&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Repeat steps 2 and 3 until temperature is cold enough&lt;/li&gt;
+  &lt;li&gt;Return the best answer seen so far&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;advantages&quot;&gt;Advantages&lt;/h2&gt;
+&lt;p&gt;Alright, now why should we use this technique? It doesn’t necessarily finds the optimum answer, it’s not necessarily fast (depends on the initial temperature, drop rate and perturbation strategy) and it’s hard to predict how good the final answer may be. Why should we use it  in first place?&lt;/p&gt;
+
+&lt;p&gt;Well, start by noticing that this solution belongs to the metaheuristic solutions class so, like every other metaheuristic, it’s not problem dependant, we can apply it to any problem we see fit.
+When we don’t know an optimum strategy to solve a problem or it’s impractical to use an exact one, this technique may be a good option for try to find a good answer in an acceptable time. Actually, its popularity is quite big in many research fields.&lt;/p&gt;
+
+&lt;p&gt;Furthermore, because it’s problem independant, it doesn’t suffers from what many heuristics tend to suffer: &lt;a href=&quot;https://en.wikipedia.org/wiki/Local_optimum&quot; target=&quot;_blank&quot;&gt;being stuck at local optimum&lt;/a&gt;. It has higher chances to converge to the global optimum (same as optimum answer) because it will, initially, accept answers that didn’t improve the current answer and, by being worst than the previous, this new answer may get it out from the local optimum leading to another local, which this time is global, optimum. The image below, from Wikipedia, illustrates this optimization concept:&lt;br /&gt;
+&lt;img src=&quot;https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Extrema_example_original.svg/256px-Extrema_example_original.svg.png&quot; alt=&quot;By KSmrq GFDL 1.2 http://www.gnu.org/licenses/old-licenses/fdl-1.2.html or GFDL http://www.gnu.org/copyleft/fdl.html, via Wikimedia Commons&quot; target=&quot;_blank&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Back to our initial question another advantage of this technique is that its speed and quality relate to the initial params, so one can balance speed over quality by incrementing or decrementing parameter values. This is ideal for scenarios where one can’t prioritize both, making this technique one of the few viable solutions in this case. Using the Stochastic Sampling perturbations one can also use randomness in its favor by executing multiple instances in parallel: both will finish at the same time returning distinct answers, just keep then the best one to increase the chances of finding the optimum one.&lt;/p&gt;
+
+&lt;h4 id=&quot;summarizing&quot;&gt;Summarizing:&lt;/h4&gt;
+&lt;ul&gt;
+  &lt;li&gt;Problem independent, applicable to any problem (“many” would be more precise here, but you got the point)&lt;/li&gt;
+  &lt;li&gt;Finds a good approximate solution when optimal is impractical&lt;/li&gt;
+  &lt;li&gt;Avoids local optimum dilemma, higher chances to converge to the global optimum&lt;/li&gt;
+  &lt;li&gt;Allows balancing speed over quality&lt;/li&gt;
+  &lt;li&gt;Stochastic, parallel solution improves approximation to optimum answer&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;applications&quot;&gt;Applications&lt;/h2&gt;
+&lt;p&gt;Jump to &lt;a href=&quot;/2017/08/04/simulated-annealing-part2.html&quot;&gt;Part 2&lt;/a&gt; for a hands-on algorithm explaining how to implement a Simulated Annealing to solve the Traveling Salesman Problem.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Simulated_annealing&quot; target=&quot;_blank&quot;&gt;Wikipedia - Simulated Annealing&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1126%2Fscience.220.4598.671&quot; target=&quot;_blank&quot;&gt;Kirkpatrick, Scott, C. Daniel Gelatt, and Mario P. Vecchi. “Optimization by simulated annealing.” science 220.4598 (1983): 671-680.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1007%2FBF00940812&quot; target=&quot;_blank&quot;&gt;Černý, V. (1985). “Thermodynamical approach to the traveling salesman problem: An efficient simulation algorithm”. Journal of Optimization Theory and Applications. 45: 41–51.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://doi.org/10.1107%2FS0108767385000563&quot; target=&quot;_blank&quot;&gt;Semenovskaya, S.; Khachaturyan, K.; Khachaturyan, A. (1985). “Statistical Mechanics Approach to the Determination of a Crystal”. Acta Crystallographica (A41): 268–273.&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jasmcole.com/2014/11/16/annealing-the-underground/&quot; target=&quot;_blank&quot;&gt;Almost Looks Like Work by Jason Cole&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Local_optimum&quot; target=&quot;_blank&quot;&gt;Wikipedia - Local optimum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Maxima_and_minima&quot; target=&quot;_blank&quot;&gt;Wikipedia - Maxima and minima&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+</content>
+ </entry>
+ 
+ <entry>
+   <title>Bye Bye Wordpress</title>
+   <link href="http://pedrohfsd.github.com/2017/07/20/bye-bye-wordpress.html"/>
+   <updated>2017-07-20T00:00:00-03:00</updated>
+   <id>http://pedrohfsd.github.com/2017/07/20/bye-bye-wordpress</id>
+   <content type="html">&lt;p&gt;Few years ago I’ve made a &lt;a href=&quot;https://itsiastic.wordpress.com&quot; target=&quot;_blank&quot;&gt;Wordpress&lt;/a&gt; blog to talk about development and algorithms in general. The main idea was to retribute the worldwide developers community with code and ideas the same way they have contributed to me/us all these years since I first became interested in coding dating back from 2000. Yeah! It’s been awhile =D.&lt;/p&gt;
+
+&lt;p&gt;The main reason I’m making this switch is because I want my projects to be backed by project pages, there’s no better fit for this than github pages (at least not while I wrote this post). If I’m going to use github pages it is best to keep it all in one place and move my blog there too.&lt;/p&gt;
+
+&lt;p&gt;I know Wordpress.com has a lot of advantages and it was good to start writing there, but the truth is that while I was happy to have a ready-made blog I was also sad feeling that my skills were being limited. I want to focus on writing but I also want freedom to change any line of code that I need to. A ready-made template is good at the beginning but after awhile it’s not mine, it’s not me. Yes, I could pay for the pro plan and design my own template, but you see, Wordpress was getting in my way and not the other way around.&lt;/p&gt;
+
+&lt;p&gt;That’s the trigger to look at the community again and evolve. That’s how I’ve found github pages, that’s how I’ve learn about Jekyll, Liquid and kramdown. Being a developer creating non-commercial pages I couldn’t find any excuses to avoid it, it’s static, it’s fast and it’s simple. Writing in markdown is trivial, I have my freedom again and you know what makes me happy too? It’s mine, it’s me, I designed it (lol, I know, there’s still a large room for improvement XD).&lt;/p&gt;
+
+&lt;p&gt;Jokes aside, I’ll try to migrate all the older posts here to make sure you won’t miss a thing, don’t worry, I’m really enjoying it so far and I hope you will too!&lt;/p&gt;
+</content>
+ </entry>
+ 
+ 
+</feed>

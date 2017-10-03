@@ -68,3 +68,11 @@ blockquote p {
   margin: 20px 0 20px 0px;
   font-size: 12px;
 }
+.home_section{
+  padding-bottom: 9px;
+  margin: 40px 0 20px;
+  border-bottom: 1px solid #eee;
+}
+.home_title{
+  color: #a2a2a2;
+}

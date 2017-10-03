@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+  <title>Optimization with 2-OPT - Part 1</title>
+  <link rel="shortcut icon" href="/favicon.ico?v=3"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous"/>
+  <style>.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #008800; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #AA22FF; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #008800; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #008800; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #008800 } /* Comment.Preproc */
+.highlight .cpf { color: #008800; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #008800; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #008800; font-weight: bold } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #AA22FF; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #AA22FF; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #AA22FF; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #AA22FF } /* Keyword.Pseudo */
+.highlight .kr { color: #AA22FF; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #00BB00; font-weight: bold } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BB4444 } /* Literal.String */
+.highlight .na { color: #BB4444 } /* Name.Attribute */
+.highlight .nb { color: #AA22FF } /* Name.Builtin */
+.highlight .nc { color: #0000FF } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #00A000 } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #B8860B } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BB4444 } /* Literal.String.Affix */
+.highlight .sb { color: #BB4444 } /* Literal.String.Backtick */
+.highlight .sc { color: #BB4444 } /* Literal.String.Char */
+.highlight .dl { color: #BB4444 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BB4444; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BB4444 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BB4444 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BB4444 } /* Literal.String.Single */
+.highlight .ss { color: #B8860B } /* Literal.String.Symbol */
+.highlight .bp { color: #AA22FF } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #00A000 } /* Name.Function.Magic */
+.highlight .vc { color: #B8860B } /* Name.Variable.Class */
+.highlight .vg { color: #B8860B } /* Name.Variable.Global */
+.highlight .vi { color: #B8860B } /* Name.Variable.Instance */
+.highlight .vm { color: #B8860B } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
+  <style>body {
+    font-family: "Merriweather", "Helvetica Neue", Arial, sans-serif;
+    font-size: 14px;
+}
+p {
+    margin: 20px 0 20px 0px;
+    line-height: 26px;
+}
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+}
+.h1, .h2, h1, h2 {
+  margin-top: 40px;
+}
+.post ul li, .post ol li {
+    margin-bottom: 10px;
+    margin-top: 10px;
+    line-height: 20px;
+}
+blockquote {
+    background-color: #eef7fa;
+    font-family: arial;
+    font-size: 95%;
+    margin: 0px;
+    padding: 20px;
+    border-left: 0px;
+}
+blockquote ol:last-child, blockquote p:last-child, blockquote ul:last-child {
+    margin-bottom: 0;
+}
+blockquote p {
+    margin-top: 0px;
+}
+.footer {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid #eee;
+  text-align: center;
+}
+.forkme {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border: 0;
+  z-index: 1;
+}
+.highlight pre{
+  border: 0px;
+}
+.canvas-demo .form-inline{
+  margin-top: 5px;
+}
+.canvas-demo .form-btn{
+  text-align: right;
+}
+.canvas-demo canvas{
+  padding: 0;
+  margin: auto;
+  margin-bottom: 20px;
+  display: block;
+  border: 1px solid #000000;
+}
+.post-title{
+}
+.post-date{
+  display: block;
+  color: #999;
+  margin: 20px 0 20px 0px;
+  font-size: 12px;
+}
+.home_section{
+  padding-bottom: 9px;
+  margin: 40px 0 20px;
+  border-bottom: 1px solid #eee;
+}
+.home_title{
+  color: #a2a2a2;
+}</style>
+  <link rel="alternate" type="application/atom+xml" href="/atom.xml" title="Atom feed">
+  <link href="https://fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic" rel="stylesheet" type="text/css">
+  <!--link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"-->
+</head>
+  
+<body>
+<a class="hidden-xs" href="http://github.com/pedrohfsd" target="_blank"><img class="forkme" src="/img/forkme.png" alt="Fork me on GitHub" /></a>
+<nav class="navbar navbar-default" style="border-radius: 0px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-offset-2 col-md-8">
+        <div class="navbar-header">
+          <!-- Create a button looks like ≡ on narrow screens and toggles navigation. -->
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <!-- <a class="navbar-brand" href="/">Home</a> -->
+        </div>
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/" style="font-size: 16px;font-weight: bold;">Home</a></li>
+            <li><a href="https://github.com/pedrohfsd" target="_blank">GitHub</a></li>
+            <!--<li><a href="http://stackoverflow.com/users/">StackOverflow</a></li>-->
+            <!--<li><a href="https://plus.google.com/">Google+</a></li>-->
+            <li><a href="https://twitter.com/pedrohfsd" target="_blank">Twitter</a></li>
+            <li><a href="https://www.linkedin.com/in/pedrodiniz/" target="_blank">LinkedIn</a></li>
+            <li><a href="mailto:pedrohfsd@gmail.com" target="_blank">Mail</a></li>
+            <!--li><a href="">Donate</a></li-->
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-offset-2 col-md-8">
+      <span class="post-title h1">Optimization with 2-OPT - Part 1</span>
+<span class="post-date">Published on Wed, Aug 09, 2017, <b>last updated on Thu, Aug 10, 2017</b></span>
+
+<div class="post">
+<blockquote>
+  <h4 id="im-dividing-this-post-into-2-parts">I’m dividing this post into 2 parts:</h4>
+  <ul>
+    <li>Part 1 (this post): Discuss the technique definition, idea and time complexity</li>
+    <li><a href="/2017/08/11/2opt-part2.html">Part 2: Applies this technique to a real problem by implementing an heuristic algorithm for the Traveling Salesman Problem.</a></li>
+  </ul>
+</blockquote>
+
+<p>The 2-OPT technique was first proposed by <a href="https://doi.org/10.1287/opre.6.6.791">Croes</a> in 1958. In his paper he defines the technique as an optimized solution for the Traveling Salesman Problem for both symmetric and asymmetric instances (the latter requiring more work). There’s no guarantee that this technique will find a global optimum answer, instead, the returning answer is usually said to be 2-optimal, making it an <a href="https://en.wikipedia.org/wiki/Heuristic">heuristic</a>. What it actually does is to gradually improve an, initially given, feasible answer (local search) until it reaches a local optimum and no more improvements can be made. Improvements are done using what he calls of “‘inversions’”.</p>
+
+<p>Accordingly to <a href="https://doi.org/10.1287/opre.6.6.791">Croes</a> own words the technique can be described as:</p>
+<blockquote>
+  <ol>
+    <li>Find a trial Solution \(s \in S\), for which M(s) is as small as we can make it at a first try.</li>
+    <li>Apply some transformations, called ‘inversions’, which transforms this trial solutions into some other elements of S, whose measures are progressive smaller.</li>
+    <li>Check C for elements which might be included in the final s at an advantage. If there are any such elements try to find a transformation which decreases the measure of the sequence.</li>
+  </ol>
+</blockquote>
+
+<p>The idea is to repeat the above procedure until there’s no improvement. Although real world observations indicated that the algorithm converges quickly, theoretically it can take exponential time.</p>
+
+<h2 id="why-does-it-works">Why Does It Works?</h2>
+<p>It works because it removes crossings, the image below illustrates this issue.
+<img src="/img/2opt.png" alt="Removing crossings" /></p>
+
+<p>This is the same as changing E,A,C,B,D,F,E into E,A,B,C,D,F,E. Visually one can intuitively associate this to a rectangle and note that A,C and B,D are like diagonals which would then be greater than the laterals A,B and C,D. This is obviously a generalization though.</p>
+
+<p><a href="https://en.wikipedia.org/wiki/2-opt">Wikipedia</a> gives a good example of this procedure:</p>
+<div class="highlighter-rouge"><pre class="highlight"><code>2optSwap(route, i, k) {
+     1. take route[1] to route[i-1] and add them in order to new_route
+     2. take route[i] to route[k] and add them in reverse order to new_route
+     3. take route[k+1] to end and add them in order to new_route
+     return new_route;
+ }
+
+Here is an example of the above with arbitrary input:
+
+example route: A ==&gt; B ==&gt; C ==&gt; D ==&gt; E ==&gt; F ==&gt; G ==&gt; H ==&gt; A  
+   example i = 4, example k = 7  
+   new_route:  
+       1. (A ==&gt; B ==&gt; C)  
+       2. A ==&gt; B ==&gt; C ==&gt; (G ==&gt; F ==&gt; E ==&gt; D)  
+       3. A ==&gt; B ==&gt; C ==&gt; G ==&gt; F ==&gt; E ==&gt; D (==&gt; H ==&gt; A)
+
+This is the complete 2-opt swap making use of the above mechanism:
+
+   repeat until no improvement is made {
+       start_again:
+       best_distance = calculateTotalDistance(existing_route)
+       for (i = 0; i &lt; number of nodes eligible to be swapped - 1; i++) {
+           for (k = i + 1; k &lt; number of nodes eligible to be swapped; k++) {
+               new_route = 2optSwap(existing_route, i, k)
+               new_distance = calculateTotalDistance(new_route)
+               if (new_distance &lt; best_distance) {
+                   existing_route = new_route
+                   goto start_again
+               }
+           }
+       }
+   }
+</code></pre>
+</div>
+
+<p>In python (considering your tour is {A,B,C,D,E,F,G,A}, that is, contains the start point again in the end) the complete procedure will be:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><table style="border-spacing: 0"><tbody><tr><td class="gutter gl" style="text-align: right"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15</pre></td><td class="code"><pre><span class="k">def</span> <span class="nf">two_opt</span><span class="p">(</span><span class="n">route</span><span class="p">):</span>
+     <span class="n">best</span> <span class="o">=</span> <span class="n">route</span>
+     <span class="n">improved</span> <span class="o">=</span> <span class="bp">True</span>
+     <span class="k">while</span> <span class="n">improved</span><span class="p">:</span>
+          <span class="n">improved</span> <span class="o">=</span> <span class="bp">False</span>
+          <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">route</span><span class="p">)</span><span class="o">-</span><span class="mi">2</span><span class="p">):</span>
+               <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">route</span><span class="p">)):</span>
+                    <span class="k">if</span> <span class="n">j</span><span class="o">-</span><span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="k">continue</span> <span class="c"># changes nothing, skip then</span>
+                    <span class="n">new_route</span> <span class="o">=</span> <span class="n">route</span><span class="p">[:]</span>
+                    <span class="n">new_route</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">route</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="c"># this is the 2woptSwap</span>
+                    <span class="k">if</span> <span class="n">cost</span><span class="p">(</span><span class="n">new_route</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cost</span><span class="p">(</span><span class="n">best</span><span class="p">):</span>
+                         <span class="n">best</span> <span class="o">=</span> <span class="n">new_route</span>
+                         <span class="n">improved</span> <span class="o">=</span> <span class="bp">True</span>
+          <span class="n">route</span> <span class="o">=</span> <span class="n">best</span>
+     <span class="k">return</span> <span class="n">best</span><span class="w">
+</span></pre></td></tr></tbody></table></code></pre></figure>
+
+<h2 id="convergence">Convergence</h2>
+<p>Although fast convergence is not guaranteed it is commonly observed in many real world applications of this technique. A <a href="http://dl.acm.org/citation.cfm?id=2284491">recent study</a> approximates it to be in the order of the number of cities. This makes it a popular heuristic with many practical applications in <a href="https://en.wikipedia.org/wiki/Travelling_salesman_problem">TSP</a>, <a href="https://en.wikipedia.org/wiki/Vehicle_routing_problem">VRP</a> and <a href="https://en.wikipedia.org/wiki/Vehicle_routing_problem">CVRP</a>. It can also be used in other metaheuristic algorithms such as <a href="https://en.wikipedia.org/wiki/Genetic_algorithm">Genetic Algorithms</a> and <a href="/2017/07/28/simulated-annealing-part1.html">Simulated Annealing</a>.</p>
+
+<h2 id="time-complexity">Time Complexity</h2>
+<p>Much has been researched about its time complexity, theoretical proves are rather complex and a <a href="http://dl.acm.org/citation.cfm?id=1283522">recommended reading</a> is given for this in the “References” section of this post. What appears to be the most intuitive and common answer for this procedure is \(O(n!)\). At each iteration the algorithm can apply at most \(O(n^2)\) inversions but the number of overall iterations is weakly bounded by \(O(n!)\) since by removing a crossing the algorithm can consequently create new ones leading to the worst case scenario where all possibilities are tested.</p>
+
+<h2 id="applications">Applications</h2>
+<p>Jump to <a href="/2017/08/11/2opt-part2.html">Part 2</a> for a hands-on algorithm explaining how to implement a 2-OPT to solve the Traveling Salesman Problem.</p>
+
+<h2 id="references">References</h2>
+<ol>
+  <li><a href="https://doi.org/10.1287/opre.6.6.791">Croes, Georges A. “A method for solving traveling-salesman problems.” Operations research 6.6 (1958): 791-812.</a></li>
+  <li><a href="http://dl.acm.org/citation.cfm?id=1283522">Englert, Matthias, Heiko Röglin, and Berthold Vöcking. “Worst case and probabilistic analysis of the 2-Opt algorithm for the TSP.” Proceedings of the eighteenth annual ACM-SIAM symposium on Discrete algorithms. Society for Industrial and Applied Mathematics, 2007.</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/2-opt">Wikipedia 2-opt</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Heuristic">Wikipedia - Heuristic</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Travelling_salesman_problem">Wikipedia - TSP</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Vehicle_routing_problem">Wikipedia - VRP</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Vehicle_routing_problem">Wikipedia - CVRP</a></li>
+  <li><a href="http://www.technical-recipes.com/2012/applying-c-implementations-of-2-opt-to-travelling-salesman-problems/">Technical Recipe - C++ Implementation of 2-opt to the “Att48” Travelling Salesman Problem</a></li>
+  <li><a href="https://cs.stackexchange.com/questions/73784/why-doesnt-2-opt-return-an-optimal-solution">StackExchange - Why doesnt 2 opt return an optimal solution</a></li>
+  <li><a href="https://codereview.stackexchange.com/questions/72265/2-opt-algorithm-for-traveling-salesman">2-opt algorithm for traveling salesman</a></li>
+  <li><a href="http://dl.acm.org/citation.cfm?id=2284491">Average-case approximation ratio of the 2-opt algorithm for the TSP</a></li>
+</ol>
+
+</div>  
+
+<div id="related">
+  <h2>Related Posts</h2>
+  <ul class="posts">
+    
+      <li><span>12 Aug 2017</span> &raquo; <a href="/2017/08/12/genetic-algorithm-part1.html">Optimization with Genetic Algorithm - Part 1</a></li>
+    
+      <li><span>11 Aug 2017</span> &raquo; <a href="/2017/08/11/2opt-part2.html">Optimization with 2-OPT - Part 2 - Animated TSP Solver</a></li>
+    
+      <li><span>04 Aug 2017</span> &raquo; <a href="/2017/08/04/simulated-annealing-part2.html">Optimization with Simulated Annealing - Part 2 - Animated TSP Solver</a></li>
+    
+  </ul>
+</div>
+
+<hr/>
+
+<!-- Disqus -->
+<div id="disqus_thread"></div>
+<script>
+(function() {
+var d = document, s = d.createElement('script');
+s.src = 'https://pedrohfsd-github-io.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+      <div class="footer">
+        <a type="application/atom+xml" href="/atom.xml">Subscribe to posts (Atom)</a>
+      </div>    
+    </div>
+  </div>
+</div>
+  
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-103653582-1', 'auto');
+  ga('send', 'pageview');
+</script>
+  
+<!-- Hotjar Tracking Code for pedrohfsd.github.io -->
+<script>
+    (function(h,o,t,j,a,r){
+        h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+        h._hjSettings={hjid:584595,hjsv:5};
+        a=o.getElementsByTagName('head')[0];
+        r=o.createElement('script');r.async=1;
+        r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+        a.appendChild(r);
+    })(window,document,'//static.hotjar.com/c/hotjar-','.js?sv=');
+</script>
+</body>
+</html>
