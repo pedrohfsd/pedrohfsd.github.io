@@ -20,7 +20,7 @@ update: 2017-10-28
 		<div class="form-inline">
 		    <div class="form-group">
 			    <input type="number" id="input_distance" min="0" step="50" value="100">
-				<label for="input_distance">Edge lenght</label>
+				<label for="input_distance">Edge length</label>
 	    	</div>
 		</div>
 		<div class="form-inline">
