@@ -5,7 +5,7 @@ function start(data, force_strength, force_distance){
         ,view : null
         ,selected_node : null
         ,selected_link : null
-        ,width : d3.select('#div_graph').node().getBoundingClientRect().width
+        ,width : d3.select('#div_graph').node().getBoundingClientRect().width-3
         ,height : 500
         ,colors : d3.scaleOrdinal(d3.schemeCategory10)
         ,g_links : null
@@ -245,7 +245,7 @@ function install_svg_listeners(plot){
     function click(){
       d3.event.preventDefault();
         if(d3.event.button != 2) return;
-        addNode(plot, ++plot.lastNodeId, d3.event.x, d3.event.y);
+        addNode(plot, ++plot.lastNodeId, plot.width/2, plot.height/2);
         update(plot);
     }
     
