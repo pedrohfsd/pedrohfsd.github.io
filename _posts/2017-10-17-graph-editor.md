@@ -2,7 +2,7 @@
 layout: post
 title: Graph Editor
 date: 2017-10-17
-update: 2017-10-28
+update: 2017-11-01
 ---
 <style>
 {% include graph.css %}
@@ -11,18 +11,36 @@ update: 2017-10-28
 <div class="well graph-demo">
 	<div id="div_graph" class="div_graph"></div>
 	<div>
+        <div class="form-inline">
+            <div class="form-group">
+                <input id="input_directed" checked type="checkbox" onchange="updateParameters(true);">
+				<label for="input_directed">Show Orientation</label>
+                <input id="input_costs" type="checkbox" onchange="updateParameters(true);" class="form-inline-space">
+				<label for="input_costs">Show Costs</label>
+                <input id="input_zeros" type="checkbox" onchange="updateParameters(true);" class="form-inline-space">
+				<label for="input_zeros">Show Zero-Cost Edges</label>
+            </div>
+		</div>
 		<div class="form-inline">
 		    <div class="form-group">
-			    <input type="number" id="input_strength" step="5" value="-50">
-				<label for="input_strength">Node force ('+' to attract, '-' to repel)</label>
+			    <input type="number" id="input_strength" step="50" value="-50" onkeyup="updateParameters(true);" onchange="updateParameters(true);"/>
+				<label for="input_strength">Node force (+attracts, -repels)</label>
 			</div>
 		</div>
 		<div class="form-inline">
 		    <div class="form-group">
-			    <input type="number" id="input_distance" min="0" step="50" value="100">
+			    <input type="number" id="input_distance" min="0" step="50" value="100" onkeyup="updateParameters(true);" onchange="updateParameters(true);"/>
 				<label for="input_distance">Edge length</label>
 	    	</div>
 		</div>
+        <div class="form-inline">
+		    <div class="form-group">
+			    <input type="number" id="input_selected" step="1" value=""/>
+				<label for="input_selected">Current selected node/edge value</label>
+                <button onclick="updateParameters(true);" class="btn btn-secondary">Update Value</button>
+	    	</div>
+		</div>
+        
 		<div class="form-inline">
 		    <div class="form-group">
 		<textarea id="input_data" rows="5" cols="50">0, 0, 0, 0, 1, 0, 0, 0, 0, 0,0, 1, 0, 0, 0, 0, 0, 0, 0, 0,0, 0, 0, 1, 0, 0, 0, 0, 0, 1,0, 0, 0, 0, 0, 0, 0, 0, 1, 0,0, 0, 1, 0, 0, 0, 0, 0, 0, 1,0, 0, 0, 0, 0, 0, 1, 0, 0, 0,0, 0, 0, 0
@@ -31,7 +49,7 @@ update: 2017-10-28
 		</div>
 		</div>
 		<div class="form-btn">
-			<button onclick="reloadData();" class="btn btn-primary">Load</button>
+			<button onclick="reloadData();" class="btn btn-primary">Load Matrix</button>
 		</div>
 
 	</div>
@@ -46,12 +64,31 @@ update: 2017-10-28
 <script type="text/javascript">
 {% include d3.v4.min.js %}
 {% include graph.js %}
-	var plot = start(d3.select("#input_data").node().value, d3.select("#input_strength").node().value, d3.select("#input_distance").node().value);
-	function reloadData(){
-	    plot.force_strength = d3.select("#input_strength").node().value;
-	    plot.force_distance = d3.select("#input_distance").node().value;
-	    load(plot, d3.select("#input_data").node().value);
-	}
+var plot = start(
+    d3.select("#input_data").node().value
+    ,d3.select("#input_strength").node().value
+    ,d3.select("#input_distance").node().value
+    ,d3.select("#input_directed").node().checked
+    ,d3.select("#input_costs").node().checked
+    ,d3.select("#input_zeros").node().checked
+    ,value_changed
+);
+function reloadData(){
+    updateParameters(false);
+    load(plot, d3.select("#input_data").node().value);
+}
+function updateParameters(doUpdate){
+    plot.force_strength = d3.select("#input_strength").node().value;
+    plot.force_distance = d3.select("#input_distance").node().value;
+    plot.show_orientation = d3.select("#input_directed").node().checked;
+    plot.show_costs = d3.select("#input_costs").node().checked;
+    plot.show_zero = d3.select("#input_zeros").node().checked;
+    plot.selected_value = d3.select("#input_selected").node().value;
+    if(doUpdate) update(plot);
+}
+function value_changed(value){
+    d3.select("#input_selected").node().value = (value===null ? "" : value);
+}
 </script>
 
 
