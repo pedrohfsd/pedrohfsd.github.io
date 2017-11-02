@@ -119,21 +119,20 @@ function start(data, force_strength, force_distance, show_orientation, show_cost
 }
 
 function update(plot){
-    // var filtered_links = plot.links.filter(function(e){if(plot.show_zero){ return true;} else{return e.cost!=0;}}); // DOMException: Failed to execute 'insertBefore' on 'Node
-    var filtered_links = plot.links.filter(function(e){return e.cost!=0;}).concat(plot.links.filter(function(e){return plot.show_zero && e.cost==0;}));
+    var filtered_links = plot.links.filter(function(e){if(plot.show_zero){ return true;} else{return e.cost!=0;}});
     
     if(plot.selected_node != null){
-        if(plot.selected_node.id != plot.selected_value){
-            if(plot.nodes.filter(function(v){return v.id == plot.selected_value}).length == 0){
-                plot.selected_node.id = plot.selected_value;
+        if(plot.selected_node.value != plot.selected_value){
+            if(plot.nodes.filter(function(v){return v.value == plot.selected_value}).length == 0){
+                plot.selected_node.value = plot.selected_value;
             }else{
                 alert("There's a node with this value already");
-                plot.selection_value_changed(plot.selected_node.id);
+                plot.selection_value_changed(plot.selected_node.value);
             }
         }
     }else if(plot.selected_link != null) plot.selected_link.cost = plot.selected_value;
     
-    var node_path_data = plot.g_nodes.selectAll('g').data(plot.nodes, function(d) { return d.id;});
+    var node_path_data = plot.g_nodes.selectAll('g').data(plot.nodes);
     plot.g_node_element = node_path_data.enter().append("g");
     plot.g_node_element.append("circle").attr("r", 12);
     plot.g_node_element.append("text")
@@ -143,15 +142,14 @@ function update(plot){
     node_path_data.exit().remove();
     
     plot.g_nodes.selectAll('g').selectAll("circle")
-        .style('fill', function(v) { if(v==plot.selected_node) return d3.rgb(plot.colors(v.id)).toString(); return "#fff";})
-        .style('stroke', function(v) { return d3.rgb(plot.colors(v.id)).toString(); });
-    plot.g_nodes.selectAll('g').selectAll("text").text(function(v) {return v.id;});
+        .style('fill', function(v) { if(v==plot.selected_node) return d3.rgb(plot.colors(v.value)).toString(); return "#fff";})
+        .style('stroke', function(v) { return d3.rgb(plot.colors(v.value)).toString(); });
+    plot.g_nodes.selectAll('g').selectAll("text").text(function(v) {return v.value;});
     
-    var link_path_data = plot.g_links.selectAll('path').data(filtered_links, function(d) { return d.source.id + "_" + d.target.id;});
+    var link_path_data = plot.g_links.selectAll('path').data(filtered_links);
     plot.g_link_element = link_path_data.enter().append("g")
         .append("path")
-        .attr("class", "link")
-        .attr("id", function(d) { return d.source.id + "_" + d.target.id;});
+        .attr("class", "link");
     plot.g_links.selectAll('path.link')
         .classed('selected', function(d) { return d == plot.selected_link; })
         .classed('focused', function(d) { return d == plot.selected_link; });
@@ -159,7 +157,7 @@ function update(plot){
     
     plot.g_links.selectAll('path').attr("marker-end", plot.show_orientation ? "url(#end-curved)" : "");
     
-    var links_text_data = plot.g_links_text.selectAll(".labelText").data(filtered_links, function(d) { return d.source.id + "_" + d.target.id;});
+    var links_text_data = plot.g_links_text.selectAll(".labelText").data(filtered_links);
     links_text_data.enter().append("text").attr("class","labelText");
     links_text_data.exit().remove();
     plot.g_links_text.selectAll(".labelText")
@@ -196,7 +194,7 @@ function install_node_listeners(plot){
                 
     function mouseover(element){
         if(d3.event.ctrlKey && plot.drag_line_source != null) plot.drag_line_target = element;
-        d3.select(this).select("circle").style('fill', d3.rgb(plot.colors(element.id)).toString());
+        d3.select(this).select("circle").style('fill', d3.rgb(plot.colors(element.value)).toString());
     }
     
     function mouseout(element){
@@ -212,7 +210,7 @@ function install_node_listeners(plot){
             plot.selection_value_changed(plot.selected_value);
         } else {
             plot.selected_node = element;
-            plot.selected_value = plot.selected_node.id;
+            plot.selected_value = plot.selected_node.value;
             plot.selection_value_changed(plot.selected_value);
         }
         plot.selected_link = null;
@@ -298,7 +296,7 @@ function install_svg_listeners(plot){
     
     function click(){
         if(d3.event.button != 2) return;
-        addNode(plot, ++plot.lastNodeId, plot.width/2, plot.height/2);
+        addNode(plot, plot.width/2, plot.height/2);
         update(plot);
     }
     
@@ -328,8 +326,11 @@ function install_body_listeners(plot){
     }
 }
 
-function addNode(plot, id, x, y){
-    plot.nodes.push({id: id, x: x, y: y});
+function addNode(plot, x, y){
+    plot.nodes.forEach(function(v){
+        if (plot.lastNodeId < v.value) plot.lastNodeId = v.value;
+    });
+    plot.nodes.push({value: ++plot.lastNodeId, x: x, y: y});
 }
 
 function removeNode(plot, v){
@@ -358,11 +359,13 @@ function load(plot, data){
     plot.links = [];
     plot.lastNodeId = -1;
 
+    update(plot);
+    
     var edges = readInputData(data);
     if(!edges) return;
     var i=0, j=0, n=edges.length;
     for(i=0; i<n; i++){
-        addNode(plot, ++plot.lastNodeId, plot.width/2, plot.height/2);
+        addNode(plot, plot.width/2, plot.height/2);
     }
     for(i=0; i<n; i++){
         for(j=0; j<n; j++){
@@ -370,6 +373,12 @@ function load(plot, data){
             addLink(plot, plot.nodes[i], plot.nodes[j], edges[i][j]);
         }
     }
+        plot.selected_node = null;
+        plot.selected_link = null;
+        plot.drag_line_source = null;
+        plot.drag_line_target = null;
+        plot.selected_value = null;
+    
     update(plot);
 }
 
